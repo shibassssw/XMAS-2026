@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dein Persönlicher Adventskalender ✨</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207',
+                        },
+                        rose: {
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                        },
+                        festive: {
+                            dark: '#0f0a0d',
+                            card: '#1c131a',
+                            hover: '#291c27',
+                            accent: '#e11d48',
+                            goldGlow: 'rgba(234, 179, 8, 0.15)',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .font-romantic {
+            font-family: 'Great Vibes', cursive;
+        }
+        
+        /* Custom Animations */
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: floatParticle 4s ease-out forwards;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(28, 19, 26, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .glass-card {
+            background: rgba(35, 23, 32, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Candle Glow Effect */
+        .glow-gold {
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.25);
+        }
+
+        .glow-rose {
+            box-shadow: 0 0 25px rgba(225, 29, 72, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0a0d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #33202e;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e11d48;
+        }
+    </style>
+</head>
+<body class="bg-[#0f0a0d] text-gray-100 min-h-screen flex flex-col font-sans selection:bg-rose-600 selection:text-white">
+
+    <!-- Background Snow Effect Canvas -->
+    <canvas id="snowCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+    <!-- Header Navigation -->
+    <header class="relative z-10 border-b border-rose-950/40 bg-[#140d12]/80 backdrop-blur-md sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-600 to-gold-500 flex items-center justify-center shadow-lg shadow-rose-900/40">
+                    <i class="fa-solid font-bold text-white fa-gift"></i>
+                </div>
+                <div>
+                    <h1 class="font-romantic text-3xl sm:text-4xl text-amber-300 leading-none">Dein Adventskalender</h1>
+                    <p class="text-xs text-rose-300/70 tracking-wider uppercase font-medium">Voller Liebe & Überraschungen</p>
+                </div>
+            </div>
+
+            <!-- Tab Navigation Buttons -->
+            <nav class="flex items-center space-x-2 bg-rose-950/30 p-1.5 rounded-full border border-rose-900/30">
+                <button id="navMainBtn" onclick="switchTab('main')" class="px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-rose-600 text-white shadow-md">
+                    <i class="fa-solid fa-calendar-days mr-1.5"></i> Kalender
+                </button>
+                <button id="navHistoryBtn" onclick="switchTab('history')" class="px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition-all duration-300">
+                    <i class="fa-solid fa-clock-rotate-left mr-1.5"></i> Verlauf (<span id="historyBadge">0</span>)
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="relative z-10 flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB 1: MAIN KALENDER VIEW -->
+        <section id="tabMain" class="space-y-8 transition-opacity duration-300">
+
+            <!-- Code Input Hero Box -->
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto border border-rose-500/20 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-12 -bottom-12 w-40 h-40 bg-rose-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-12 -top-12 w-40 h-40 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 mb-3">
+                    <i class="fa-solid fa-key text-xl"></i>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-white mb-2">Hast du ein Türchen geöffnet?</h2>
+                <p class="text-sm text-gray-300 mb-6 max-w-md mx-auto">
+                    Gib hier den 5-stelligen Code aus deinem gedruckten Türchen ein, um deine Überraschung freizuschalten!
+                </p>
+
+                <!-- Code Input Form -->
+                <form id="codeForm" onsubmit="handleCodeSubmit(event)" class="space-y-4">
+                    <div class="flex justify-center items-center gap-2 max-w-xs mx-auto">
+                        <input type="text" id="codeInput" maxlength="5" placeholder="12345" 
+                            class="w-full text-center text-2xl sm:text-3xl tracking-[0.3em] font-mono font-bold bg-black/50 border-2 border-rose-900/60 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/20 text-amber-300 rounded-2xl py-3 px-4 outline-none uppercase transition-all duration-300 placeholder-gray-700 shadow-inner">
+                    </div>
+                    <button type="submit" 
+                        class="w-full max-w-xs py-3.5 px-6 rounded-2xl bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-semibold text-sm shadow-lg shadow-rose-900/40 hover:shadow-rose-600/30 transform hover:-translate-y-0.5 transition-all duration-300 active:translate-y-0">
+                        <i class="fa-solid fa-sparkles mr-2"></i> Code Einlösen
+                    </button>
+                </form>
+
+                <div id="codeFeedback" class="mt-4 text-xs sm:text-sm font-medium min-h-[20px] transition-all"></div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-4 bg-black/30 border border-white/5 rounded-2xl p-4 px-6 text-xs sm:text-sm text-gray-400">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-box-open text-rose-400"></i>
+                    <span>Freigeschaltet: <strong id="unlockedCount" class="text-white">0</strong> / 24</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-heart text-amber-400"></i>
+                    <span>Eingelöst: <strong id="redeemedCount" class="text-white">0</strong> / 24</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-calendar-check text-rose-400"></i>
+                    <span id="currentDateDisplay">Dezember 2026</span>
+                </div>
+            </div>
+
+            <!-- 24 Days Grid -->
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-grip text-rose-500"></i> Alle Türchen in der Übersicht
+                </h3>
+                <div id="calendarGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+                    <!-- Cards dynamically rendered here via JS -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- TAB 2: EINLÖSUNGSVERLAUF (HISTORY) VIEW -->
+        <section id="tabHistory" class="space-y-6 hidden transition-opacity duration-300">
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                            <i class="fa-solid fa-box-open text-amber-400"></i>
+                            Euer Einlösungsverlauf
+                        </h2>
+                        <p class="text-sm text-gray-400 mt-1">
+                            Hier findest du alle bereits eingegebenen Türchen. Klicke auf ein Türchen, um die Animation & deinen Gutschein erneut anzuzeigen!
+                        </p>
+                    </div>
+                    <div class="bg-rose-950/40 px-4 py-2 rounded-2xl border border-rose-800/30 text-rose-300 text-xs sm:text-sm font-medium">
+                        Erinnerungen festhalten ✨
+                    </div>
+                </div>
+
+                <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dynamic history cards inserted here -->
+                </div>
+
+                <div id="emptyHistoryMsg" class="text-center py-12 hidden">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center text-gray-500">
+                        <i class="fa-solid fa-lock text-2xl"></i>
+                    </div>
+                    <h4 class="text-lg font-medium text-gray-300">Noch keine Türchen freigeschaltet</h4>
+                    <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">Gib oben deinen ersten 5-stelligen Code aus dem 3D-Druck-Kalender ein!</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 border-t border-white/5 py-6 bg-black/40 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>Made with ❤️ & 3D-Druck Liebe | Adventskalender Edition</p>
+            <div class="flex items-center space-x-4">
+                <button onclick="openAdminModal()" class="text-gray-600 hover:text-rose-400 transition-colors p-2 rounded-lg hover:bg-white/5" title="Admin Einstellungen">
+                    <i class="fa-solid fa-lock-keyhole"></i> Admin-Bereich
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL: REWARD / CODE CELEBRATION MODAL -->
+    <div id="rewardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 text-center border-2 border-amber-400/40 shadow-2xl transform scale-95 transition-transform duration-300 relative overflow-hidden" id="rewardModalContent">
+            
+            <button onclick="closeRewardModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Top Icon Badge -->
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 to-rose-600 shadow-lg shadow-amber-500/30 text-white text-3xl mb-4 border-4 border-black/40 animate-bounce">
+                <i id="modalIcon" class="fa-solid fa-gift"></i>
+            </div>
+
+            <!-- Header -->
+            <div id="modalDayNumber" class="text-xs font-bold uppercase tracking-widest text-amber-400 mb-1">Türchen Tag 1</div>
+            <h3 id="modalTitle" class="text-2xl sm:text-3xl font-bold text-white mb-3">Gutschein Name</h3>
+
+            <!-- Message Box -->
+            <div class="bg-black/40 rounded-2xl p-4 sm:p-5 border border-white/10 mb-6 text-left relative">
+                <i class="fa-solid fa-quote-left text-rose-500/20 text-3xl absolute top-2 left-3"></i>
+                <p id="modalMessage" class="text-sm sm:text-base text-gray-200 leading-relaxed relative z-10 italic pl-4">
+                    Hier steht deine süße, persönliche Nachricht für das Türchen.
+                </p>
+            </div>
+
+            <!-- Redemption Action Button & Status -->
+            <div class="space-y-3">
+                <button id="modalRedeemBtn" onclick="toggleRedeemCurrentDay()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> <span id="modalRedeemBtnText">Als "Eingelöst" markieren</span>
+                </button>
+
+                <p id="modalStatusTag" class="text-xs text-emerald-400 font-medium hidden">
+                    <i class="fa-solid fa-check-double mr-1"></i> Dieser Gutschein wurde bereits eingelöst!
+                </p>
+            </div>
+
+            <p class="text-[11px] text-gray-400 mt-4">
+                Du kannst diese Nachricht jederzeit im "Verlauf"-Tab erneut aufrufen!
+            </p>
+        </div>
+    </div>
+
+    <!-- MODAL: ADMIN CONTROL PANEL -->
+    <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-lg hidden">
+        <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl p-6 flex flex-col border border-rose-500/30 shadow-2xl">
+            
+            <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-rose-500"></i> Admin Einstellungen & Codes
+                    </h3>
+                    <p class="text-xs text-gray-400">Verwalte alle 24 Türchen-Codes, Geschenke & den Status</p>
+                </div>
+                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Admin Password Prompt Section -->
+            <div id="adminAuthSection" class="py-12 text-center space-y-4">
+                <i class="fa-solid fa-shield-halved text-4xl text-rose-500 mb-2"></i>
+                <h4 class="text-lg font-semibold text-white">Passwort geschützt</h4>
+                <p class="text-xs text-gray-400">Gib den Admin-Code ein (Standard: 1234):</p>
+                <div class="flex justify-center gap-2 max-w-xs mx-auto">
+                    <input type="password" id="adminPassInput" class="bg-black/60 border border-white/20 rounded-xl px-4 py-2 text-center text-white outline-none focus:border-rose-500" placeholder="****">
+                    <button onclick="checkAdminPass()" class="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white font-medium rounded-xl text-sm">
+                        Login
+                    </button>
+                </div>
+                <p id="adminAuthErr" class="text-xs text-rose-400 hidden">Falsches Passwort!</p>
+            </div>
+
+            <!-- Admin Panel Content (Hidden until password correct) -->
+            <div id="adminPanelContent" class="hidden flex-col flex-grow overflow-hidden space-y-4">
+                
+                <!-- Global Quick Actions -->
+                <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-black/40 rounded-2xl border border-white/5">
+                    <div class="flex items-center gap-2">
+                        <button onclick="fillPresetData()" class="px-3 py-2 bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/40 text-amber-300 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Beispiel-Belegungen laden
+                        </button>
+                        <button onclick="resetAllStatus()" class="px-3 py-2 bg-rose-950/50 hover:bg-rose-900/60 border border-rose-800/40 text-rose-300 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Fortschritt zurücksetzen
+                        </button>
+                    </div>
+                    <span class="text-xs text-gray-400">Änderungen werden sofort gespeichert.</span>
+                </div>
+
+                <!-- 24 Days Editor Scrollable Table/List -->
+                <div class="flex-grow overflow-y-auto pr-2 space-y-3">
+                    <div id="adminDaysList" class="space-y-3">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-white/10 flex justify-end">
+                    <button onclick="closeAdminModal()" class="px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold rounded-xl">
+                        Fertig & Schließen
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Default Sample Data for 24 Days
+        const DEFAULT_CALENDAR_DATA = [
+            { day: 1, code: "12345", title: "Film-Aussuch-Recht", category: "film", message: "Heute darfst du komplett alleine entscheiden, welchen Film oder welche Serie wir heute Abend schauen. Ich meckere kein einziges Mal! 🎬🍿", unlocked: false, redeemed: false },
+            { day: 2, code: "23456", title: "Rückenmassage (20 Min)", category: "massage", message: "Mach es dir gemütlich! Du hast dir eine ausgiebige 20-minütige Entspannungsmassage mit warmem Öl verdient. 💆‍♀️✨", unlocked: false, redeemed: false },
+            { day: 3, code: "34567", title: "Lieblingsessen kochen", category: "food", message: "Sag mir einfach, worauf du heute deinen Riesen-Heißhunger hast. Ich koche dir dein absolutes Lieblingsgericht! 🍝❤️", unlocked: false, redeemed: false },
+            { day: 4, code: "45678", title: "Kaffee ans Bett", category: "coffee", message: "Einlösbar an einem Morgen deiner Wahl: Du bleibst gemütlich im Bett eingekuschelt und ich bringe dir deinen frischen Lieblingskaffee/Kakao! ☕🥐", unlocked: false, redeemed: false },
+            { day: 5, code: "56789", title: "Kiosksnack-Gutschein", category: "food", message: "Bei unserem nächsten Spaziergang oder Einkauf darfst du dir eine Nascherei deiner Wahl aussuchen – geht voll auf mich! 🍫😋", unlocked: false, redeemed: false },
+            { day: 6, code: "67890", title: "Nikolaus Überraschungs-Date", category: "date", message: "Alles Liebe zum Nikolaus! Ich habe ein kleines Überraschungs-Date für uns geplant. Lass dich einfach überraschen! 🎅✨", unlocked: false, redeemed: false },
+            { day: 7, code: "11111", title: "Couch-Gaming-Abend", category: "game", message: "Ein gemeinsamer gemütlicher Gaming-Abend mit Snacks auf der Couch. Wir spielen dein Lieblings-Koop-Game! 🎮🍕", unlocked: false, redeemed: false },
+            { day: 8, code: "22222", title: "Kuschel-Garantie Flatrate", category: "love", message: "Sofortige Einlösung für unbegrenzte, warme Kuschelzeit auf dem Sofa. Alles andere muss warten! 🛋️🧸", unlocked: false, redeemed: false },
+            { day: 9, code: "33333", title: "Nachtspaziergang & Glühwein", category: "date", message: "Wir ziehen uns dick an und machen einen Spaziergang im Dunkeln mit heißem Kakao oder Glühwein to-go! 🌙☕", unlocked: false, redeemed: false },
+            { day: 10, code: "44444", title: "Chauffeur-Dienst", category: "car", message: "Egal ob Regen oder Kälte: Ich fahre dich wohin du möchtest, verharre als dein persönlicher Fahrer und hole dich wieder ab! 🚗💨", unlocked: false, redeemed: false },
+            { day: 11, code: "55555", title: "Plätzchen-Back-Party", category: "food", message: "Gemeinsame Backsession in der Küche mit Weihnachtsmusik, viel Teig naschen und maximalem Mehl-Chaos! 🍪🎄", unlocked: false, redeemed: false },
+            { day: 12, code: "66666", title: "Fußmassage nach lange Tag", category: "massage", message: "Nach einem anstrengenden Tag: Füße hochlegen! Ich kümmere mich um eine entspannende Fußmassage. 🦶💆‍♀️", unlocked: false, redeemed: false },
+            { day: 13, code: "77777", title: "Der 'Du hast Recht' Joker", category: "joker", message: "Setze diesen Joker in einer Diskussion ein und ich muss dir sofort zustimmen und recht geben! 🤐🏆", unlocked: false, redeemed: false },
+            { day: 14, code: "88888", title: "Eis/Dessert Bringdienst", category: "food", message: "Lust auf was Süßes? Ich flitze spontan los oder zaubere dir dein Lieblings-Dessert auf der Couch! 🍦🍨", unlocked: false, redeemed: false },
+            { day: 15, code: "99999", title: "Spontaner Ausflug", category: "date", message: "Einlösbar an einem Wochenende: Wir steigen ins Auto/die Bahn und fahren an einen Ort, an dem wir noch nie zusammen waren! 🗺️✨", unlocked: false, redeemed: false },
+            { day: 16, code: "12121", title: "Zwei Stunden Me-Time", category: "love", message: "Ich nehme dir heute alle Haushaltsaufgaben ab und du kannst dich 2 Stunden lang komplett entspannen & machen was du willst! 🛁📖", unlocked: false, redeemed: false },
+            { day: 17, code: "23232", title: "Wellness-Abend Zuhause", category: "massage", message: "Ich verwandle unser Badezimmer/Wohnzimmer in eine kleine Spa-Oase mit Kerzen, Musik und Gesichtsmasken! 🕯️🧴", unlocked: false, redeemed: false },
+            { day: 18, code: "34343", title: "Frühstück im Bett Deluxe", category: "food", message: "Sonntags-Frühstück komplett ans Bett serviert mit Brötchen, Saft und allem was dazugehört! 🥐🍓", unlocked: false, redeemed: false },
+            { day: 19, code: "45454", title: "Foto-Shooting Moment", category: "date", message: "Wir machen heute 3 schöne, neue Pärchenfotos zusammen für unsere Erinnerungssammlung! 📸❤️", unlocked: false, redeemed: false },
+            { day: 20, code: "56565", title: "Wunsch-Playlist Abend", category: "music", message: "Den ganzen Abend läuft nur deine Musik – egal welches Genre oder wie oft dein Lieblingssong in Dauerschleife läuft! 🎶🎧", unlocked: false, redeemed: false },
+            { day: 21, code: "67676", title: "Süßer Liebesbrief", category: "love", message: "Ich habe dir einen echten, handgeschriebenen Brief verfasst. Schau mal in deine Jackentasche / unters Kissen! ✉️💖", unlocked: false, redeemed: false },
+            { day: 22, code: "78787", title: "Snack-Bar für den Filmabend", category: "food", message: "Ich bereite ein riesiges Snack-Tablett mit Popcorn, Nachos, Gummibärchen und Getränken für uns vor! 🍿🥤", unlocked: false, redeemed: false },
+            { day: 23, code: "89898", title: "Vorfreude auf Morgen Talk", category: "love", message: "Wir machen es uns bei Kerzenschein gemütlich und reden über unsere schönsten gemeinsamen Momente des Jahres! 🕯️✨",
