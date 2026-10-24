@@ -143,6 +143,20 @@
                 </div>
             </div>
             
+   <!-- Tab Buttons -->
+            <nav class="flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-2xl border border-sky-900/50">
+                <button id="navMainBtn" onclick="switchTab('main')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/20 flex items-center gap-1.5">
+
+                </button>
+                <button id="navHistoryBtn" onclick="switchTab('history')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300 flex items-center gap-1.5">
+
+                </button>
+            </nav>
+        </div>
+    </header>
+
+
+            
     <!-- LIVE SYNC STATUS BADGE -->
     <div id="syncStatusBadge" class="fixed bottom-4 left-4 z-40 px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-900/90 border border-sky-800 text-sky-300 flex items-center gap-2 shadow-lg backdrop-blur-md">
         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="syncDot"></span>
