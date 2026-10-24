@@ -1,11 +1,21 @@
 <!DOCTYPE html>
-<html lang="de" class="dark h-full">
+<html lang="de" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XMAS 2026 D&J - Adventskalender</title>
-    <!-- Tailwind CSS -->
+    <title>XMAS 2026 D&J ❤️</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -13,275 +23,367 @@
                 extend: {
                     colors: {
                         stitch: {
-                            900: '#030712',
-                            800: '#0b132b',
-                            700: '#1c2541',
-                            blue: '#0284c7',
-                            ice: '#38bdf8',
-                            angel: '#f472b6',
-                            rose: '#fb7185'
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
+                        angel: {
+                            300: '#f472b6',
+                            400: '#f43f5e',
+                            500: '#ec4899',
                         }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Firebase JS SDK (Compat version) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <style>
         body {
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: #030712;
             color: #f3f4f6;
             overflow-x: hidden;
         }
-        h1, h2, h3, .font-heading {
-            font-family: 'Fredoka', cursive;
+
+        .font-display {
+            font-family: 'Fredoka', sans-serif;
         }
-        /* Custom scrollbar */
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+        }
+
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card-hover:hover {
+            transform: translateY(-4px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 12px 30px -10px rgba(2, 132, 199, 0.3);
+        }
+
+        .celebration-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            animation: floatUpAndFade 3s ease-out forwards;
+        }
+
+        @keyframes floatUpAndFade {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.6) rotate(0deg);
+            }
+            50% {
+                opacity: 0.9;
+                transform: translateY(-250px) scale(1.2) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-500px) scale(0.4) rotate(360deg);
+            }
+        }
+
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #0b132b;
+            background: #030712;
         }
         ::-webkit-scrollbar-thumb {
-            background: #1c2541;
+            background: #1e293b;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #0284c7;
         }
-        /* Glassmorphism effects */
-        .glass-panel {
-            background: rgba(11, 19, 43, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(56, 189, 248, 0.15);
-        }
-        .glass-card {
-            background: rgba(28, 37, 65, 0.6);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(244, 114, 182, 0.15);
-        }
-        /* Animations */
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(244, 114, 182, 0.5); }
-        }
-        .glow-effect {
-            animation: pulse-glow 4s infinite ease-in-out;
-        }
     </style>
 </head>
-<body class="min-h-full flex flex-col justify-between relative bg-stitch-900 text-slate-100">
+<body class="min-h-screen flex flex-col relative selection:bg-sky-500 selection:text-white">
 
-    <!-- Background Canvas for Stars/Snow -->
-    <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+    <canvas id="starCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-60"></canvas>
 
-    <!-- Content Wrapper -->
-    <div class="relative z-10 flex flex-col min-h-screen">
-        
-        <!-- Header Nav -->
-        <header class="sticky top-0 z-30 glass-panel border-b border-stitch-ice/20 px-4 py-3 shadow-lg">
-            <div class="max-w-6xl mx-auto flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-stitch-blue to-stitch-angel flex items-center justify-center text-white shadow-md">
-                        <i class="fa-solid font-bold fa-heart text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-stitch-ice to-stitch-angel">DJ Kalender</h1>
-                        <p class="text-xs text-stitch-angel/80 font-medium">Voller Liebe ❤️ | XMAS 2026</p>
+    <header class="relative z-30 border-b border-sky-900/40 bg-slate-950/90 backdrop-blur-xl sticky top-0 shadow-lg shadow-black/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Logo / Branding -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-600 via-sky-400 to-pink-400 p-0.5 shadow-lg shadow-sky-500/20 flex-shrink-0">
+                    <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-sky-400 font-display text-xl font-bold">
+                        🌺
                     </div>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span id="syncStatus" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-400 border border-emerald-500/30">
-                        <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Synchronisiert
-                    </span>
+                <div>
+                    <h1 class="font-display font-bold text-lg sm:text-xl text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-sky-100 to-pink-300">
+                        DJ Kalender
+                    </h1>
+                    <p class="text-[10px] sm:text-xs text-sky-300/70 font-medium">Voller Liebe❤️</p>
                 </div>
             </div>
-        </header>
-
-        <!-- Main Content Container -->
-        <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full space-y-8">
             
-            <!-- Code Input Hero Box -->
-            <section class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden text-center max-w-2xl mx-auto glow-effect">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-stitch-angel/10 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-stitch-ice/10 rounded-full blur-2xl pointer-events-none"></div>
+   <!-- Tab Buttons -->
+            <nav class="flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-2xl border border-sky-900/50">
 
-                <div class="inline-block p-3 bg-stitch-800/80 rounded-2xl border border-stitch-ice/30 mb-4 shadow-inner">
-                    <i class="fa-solid fa-key text-3xl text-stitch-ice"></i>
-                </div>
-                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">Türchen-Code eingeben</h2>
-                <p class="text-slate-300 text-sm mb-6">Gib deinen 5-stelligen Tages-Code ein, um dein Geschenk freizuschalten!</p>
 
-                <form id="codeForm" class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
-                    <input type="text" id="codeInput" maxlength="5" placeholder="z. B. 10001" 
-                        class="px-5 py-3 rounded-xl bg-stitch-900/90 border border-stitch-ice/40 text-center font-mono text-lg font-bold tracking-widest text-stitch-ice placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-stitch-angel transition">
-                    <button type="submit" 
-                        class="px-6 py-3 rounded-xl bg-gradient-to-r from-stitch-blue to-stitch-angel hover:from-stitch-blue/90 hover:to-stitch-angel/90 text-white font-bold shadow-lg shadow-stitch-blue/20 transition hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                        <span>Öffnen</span>
-                        <i class="fa-solid fa-gift"></i>
-                    </button>
-                </form>
-                <p id="codeError" class="text-rose-400 text-sm mt-3 hidden font-semibold"></p>
-            </section>
+                </button>
+            </nav>
+        </div>
+    </header>
 
-            <!-- Stats Bar -->
-            <section class="grid grid-cols-2 sm:grid-cols-2 gap-4 max-w-xl mx-auto">
-                <div class="glass-card rounded-2xl p-4 text-center border border-stitch-ice/20 flex items-center justify-between px-6">
-                    <div class="text-left">
-                        <p class="text-xs uppercase tracking-wider text-slate-400 font-bold">Freigeschaltet</p>
-                        <p id="unlockedCount" class="text-2xl font-extrabold text-stitch-ice">0 / 24</p>
-                    </div>
-                    <i class="fa-solid fa-box-open text-2xl text-stitch-ice/60"></i>
-                </div>
-                <div class="glass-card rounded-2xl p-4 text-center border border-stitch-angel/20 flex items-center justify-between px-6">
-                    <div class="text-left">
-                        <p class="text-xs uppercase tracking-wider text-slate-400 font-bold">Eingelöst</p>
-                        <p id="redeemedCount" class="text-2xl font-extrabold text-stitch-angel">0 / 24</p>
-                    </div>
-                    <i class="fa-solid fa-circle-check text-2xl text-stitch-angel/60"></i>
-                </div>
-            </section>
 
-            <!-- 24 Doors Grid -->
-            <section>
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-days text-stitch-ice"></i>
-                        <span>Alle 24 Türchen</span>
-                    </h2>
-                    <span class="text-xs text-slate-400">Dezember 2026</span>
-                </div>
-
-                <div id="doorsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <!-- Dynamic doors loaded here -->
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="glass-panel border-t border-stitch-ice/10 py-6 px-4 text-center text-xs text-slate-400 mt-12">
-            <p>© 2026 XMAS Adventskalender für D&J • Erstellt mit ❤️</p>
-        </footer>
+            
+    <!-- LIVE SYNC STATUS BADGE -->
+    <div id="syncStatusBadge" class="fixed bottom-4 left-4 z-40 px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-900/90 border border-sky-800 text-sky-300 flex items-center gap-2 shadow-lg backdrop-blur-md">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="syncDot"></span>
+        <span id="syncText">Verbinde mit Live-Datenbank...</span>
     </div>
 
-    <!-- Floating Admin Button -->
-    <button id="adminTriggerBtn" title="Admin-Panel" 
-        class="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-stitch-700/90 text-stitch-ice hover:text-white hover:bg-stitch-blue border border-stitch-ice/30 shadow-xl flex items-center justify-center transition hover:scale-110">
+    <!-- MAIN CONTAINER (Sauber unter dem Header platziert) -->
+    <main class="relative z-10 flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <!-- TAB 1: MAIN KALENDER -->
+        <div id="tabMain" class="space-y-8">
+            
+            <!-- CODE-EINGABE HERO BOX -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-2xl mx-auto text-center relative overflow-hidden border border-sky-500/30 shadow-2xl shadow-sky-950/50">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <!-- Stitch & Angel Banner -->
+                <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-sky-500/10 border border-sky-400/30 text-sky-300 text-xs font-semibold mb-4">
+                    <span>Schöne Weihnachtszeit!</span>
+                </div>
+
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
+                    Schon ein Türchen geöffnet?
+                </h2>
+                <p class="text-xs sm:text-sm text-sky-200/80 mb-6 max-w-md mx-auto">
+                    Gib den 5 Stelligen Code aus deinem Kalender ein um den Jeweiligen Tag einzulösen❤️
+                </p>
+
+                <form onsubmit="handleCodeSubmit(event)" class="space-y-4 max-w-sm mx-auto">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="codeInput" 
+                            maxlength="5" 
+                            placeholder="z.B. 10001"
+                            class="w-full bg-slate-950/90 border-2 border-sky-800 focus:border-sky-400 rounded-2xl px-4 py-3.5 text-center text-xl sm:text-2xl font-bold font-mono tracking-widest text-sky-300 placeholder:text-slate-600 outline-none transition-all shadow-inner uppercase"
+                            required
+                        >
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-500 via-sky-600 to-sky-700 hover:from-sky-400 hover:to-sky-600 text-white font-display font-bold text-base shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center space-x-2"
+                    >
+                        <i class="fa-solid fa-key"></i>
+                        <span>Code Einlösen</span>
+                    </button>
+                </form>
+
+                <div id="codeFeedback" class="mt-4 text-xs sm:text-sm font-medium transition-all min-h-[20px]"></div>
+            </div>
+
+            <!-- STATS BAR -->
+            <div class="flex items-center justify-between bg-slate-900/60 border border-sky-900/30 rounded-2xl p-4 max-w-2xl mx-auto text-xs sm:text-sm">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sky-400 font-bold"><i class="fa-solid fa-unlock-keyhole mr-1"></i>Freigeschaltet:</span>
+                    <span id="unlockedCount" class="font-bold text-white bg-sky-950 border border-sky-800 px-2.5 py-0.5 rounded-lg">0</span>
+                    <span class="text-gray-400">/ 24</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-heart mr-1"></i>Eingelöst:</span>
+                    <span id="redeemedCount" class="font-bold text-white bg-emerald-950 border border-emerald-800 px-2.5 py-0.5 rounded-lg">0</span>
+                    <span class="text-gray-400">/ 24</span>
+                </div>
+            </div>
+
+            <!-- 24 TÜRCHEN GRID -->
+            <div>
+                <h3 class="font-display font-bold text-xl text-white mb-4 flex items-center space-x-2">
+                    <span>Alle 24 Türchen</span>
+                    <span class="text-xs font-sans font-normal text-sky-400 bg-sky-950/80 px-2.5 py-1 rounded-full border border-sky-800">1. bis 24. Dezember</span>
+                </h3>
+
+                <div id="calendarGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+                    <!-- Dynamisch befüllt via JS -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TAB 2: EINLÖSUNGSVERLAUF (HISTORY) -->
+        <div id="tabHistory" class="hidden space-y-6">
+            <div class="bg-slate-900/60 border border-sky-900/40 rounded-3xl p-6">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white">Dein Einlösungsverlauf</h3>
+                </div>
+                <p class="text-xs sm:text-sm text-sky-200/70">
+                    Hier findest du alle Türchen, die du bereits freigeschaltet hast. Klicke einfach auf eine Karte, um die Zauber-Animation und deine Nachricht jederzeit erneut abzuspielen! ✨
+                </p>
+            </div>
+
+            <div id="historyGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Dynamische Verlaufs-Karten -->
+            </div>
+
+            <div id="emptyHistoryMsg" class="text-center py-12 glass-card rounded-3xl border border-sky-900/30">
+                <div class="text-4xl mb-3">❤️</div>
+                <h4 class="font-display font-bold text-lg text-white mb-1">Noch keine Türchen geöffnet</h4>
+                <p class="text-xs text-sky-200/60 max-w-xs mx-auto">Gib oben deinen ersten 5-stelligen Code ein, um hier deinen Verlauf aufzubauen!</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FLOATING ADMIN GEAR BUTTON -->
+    <button 
+        onclick="openAdminModal()" 
+        class="fixed bottom-4 right-4 z-40 w-11 h-11 rounded-2xl bg-slate-900/90 border border-sky-800/80 text-sky-300 hover:text-white hover:border-sky-400 flex items-center justify-center shadow-lg backdrop-blur-md transition-all hover:scale-105 active:scale-95"
+        title="Admin Einstellungen"
+    >
         <i class="fa-solid fa-gear text-lg"></i>
     </button>
 
-    <!-- Reward Modal -->
-    <div id="rewardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-        <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 border-2 border-stitch-ice/40 shadow-2xl relative transform scale-95 transition-transform duration-300" id="rewardModalCard">
-            <button id="closeRewardModal" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-stitch-800 text-slate-400 hover:text-white flex items-center justify-center transition">
+    <!-- MODAL: REWARD SHOWCASE -->
+    <div id="rewardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div id="rewardModalContent" class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-8 border-2 border-sky-400/50 relative shadow-2xl transform scale-95 transition-transform duration-300 text-center overflow-hidden">
+            
+            <!-- Glow background -->
+            <div class="absolute -top-20 -left-20 w-40 h-40 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <button onclick="closeRewardModal()" class="absolute top-4 right-4 w-9 h-9 rounded-xl bg-slate-900/80 border border-sky-800 text-gray-400 hover:text-white flex items-center justify-center transition-colors">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            
-            <div class="text-center space-y-4">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-stitch-blue to-stitch-angel text-white shadow-lg text-2xl">
-                    <i class="fa-solid fa-gift"></i>
+
+            <!-- Stitch & Angel Badge -->
+            <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-semibold mb-4">
+                <span>Dustins Geschenk</span>
+            </div>
+
+            <div class="text-3xl sm:text-4xl font-display font-bold text-sky-300 mb-1" id="modalDayNumber">
+                Türchen Tag 1
+            </div>
+
+            <h3 class="text-xl sm:text-2xl font-bold text-white mb-4" id="modalTitle">
+                Gutschein-Titel
+            </h3>
+
+            <!-- Message Card -->
+            <div class="bg-slate-950/80 border border-sky-800/60 rounded-2xl p-5 mb-6 text-left relative overflow-hidden">
+                <div class="text-xs font-semibold uppercase tracking-wider text-sky-400 mb-1 flex items-center justify-between">
+                    <span>Geschenkinfo:</span>
+                    <span id="modalCategoryBadge" class="text-[10px] px-2 py-0.5 rounded-md bg-sky-950 border border-sky-800 text-sky-300">Gutschein</span>
                 </div>
+                <p id="modalMessage" class="text-sm sm:text-base text-sky-100 leading-relaxed font-medium italic">
+                    Nachricht lädt...
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-2.5">
+                <button id="modalRedeemBtn" onclick="toggleRedeemCurrentDay()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check"></i>
+                    <span id="modalRedeemBtnText">Als 'Eingelöst' markieren</span>
+                </button>
                 
-                <div>
-                    <div class="flex items-center justify-center gap-2 mb-1">
-                        <span id="modalDayBadge" class="px-3 py-1 rounded-full bg-stitch-ice/20 text-stitch-ice font-bold text-xs">Türchen --</span>
-                        <span id="modalCategoryBadge" class="px-3 py-1 rounded-full bg-stitch-angel/20 text-stitch-angel font-bold text-xs">Kategorie</span>
-                    </div>
-                    <h3 id="modalTitle" class="text-2xl sm:text-3xl font-extrabold text-white mt-2">Titel</h3>
-                </div>
+                <button onclick="closeRewardModal()" class="w-full py-3 px-6 rounded-2xl bg-slate-900 hover:bg-slate-800 text-gray-300 text-xs font-medium border border-sky-900/50 transition-colors">
+                    Schließen
+                </button>
+            </div>
 
-                <div class="p-4 rounded-2xl bg-stitch-900/80 border border-slate-700 text-slate-200 text-sm leading-relaxed text-left min-h-[100px] flex items-center justify-center" id="modalMessage">
-                    Nachricht
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                    <button id="toggleRedeemBtn" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm bg-stitch-angel/20 border border-stitch-angel/40 text-stitch-angel hover:bg-stitch-angel hover:text-white transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-check"></i>
-                        <span id="redeemBtnText">Als eingelöst markieren</span>
-                    </button>
-                    <button id="closeRewardBtn" class="py-3 px-6 rounded-xl font-bold text-sm bg-stitch-800 text-slate-300 hover:bg-stitch-700 transition">
-                        Schließen
-                    </button>
-                </div>
+            <div id="modalStatusTag" class="mt-4 text-xs font-medium text-emerald-400 hidden">
+                <i class="fa-solid fa-circle-check mr-1"></i> Dieser Gutschein wurde eingelöst!
             </div>
         </div>
     </div>
 
-    <!-- Admin Panel Modal -->
-    <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
-        <div class="glass-panel max-w-4xl w-full max-h-[90vh] rounded-3xl p-6 border border-stitch-ice/30 shadow-2xl flex flex-col">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-4">
-                <div class="flex items-center space-x-3">
-                    <i class="fa-solid fa-sliders text-2xl text-stitch-ice"></i>
-                    <div>
-                        <h3 class="text-xl font-bold text-white">Admin-Verwaltung</h3>
-                        <p class="text-xs text-slate-400">Türchen, Codes & Inhalte bearbeiten</p>
-                    </div>
+    <!-- MODAL: ADMIN PANEL -->
+    <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden">
+        <div class="glass-card rounded-3xl max-w-2xl w-full p-6 border border-sky-500/40 relative shadow-2xl max-h-[90vh] flex flex-col">
+            
+            <div class="flex items-center justify-between pb-4 border-b border-sky-900/50 mb-4">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-sliders text-sky-400 text-lg"></i>
+                    <h3 class="font-display font-bold text-lg text-white">Admin Verwaltung</h3>
                 </div>
-                <button id="closeAdminModal" class="w-9 h-9 rounded-full bg-stitch-800 text-slate-400 hover:text-white flex items-center justify-center">
+                <button onclick="closeAdminModal()" class="w-8 h-8 rounded-xl bg-slate-900 text-gray-400 hover:text-white flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- PIN Form Section -->
-            <div id="adminPinSection" class="my-auto py-12 text-center max-w-xs mx-auto w-full">
-                <i class="fa-solid fa-lock text-4xl text-stitch-angel mb-4"></i>
-                <h4 class="text-lg font-bold text-white mb-2">PIN erforderlich</h4>
-                <form id="adminPinForm" class="space-y-4">
-                    <input type="password" id="adminPinInput" placeholder="PIN eingeben" 
-                        class="w-full px-4 py-2.5 rounded-xl bg-stitch-900 border border-slate-700 text-center text-lg tracking-widest focus:ring-2 focus:ring-stitch-blue outline-none">
-                    <button type="submit" class="w-full py-2.5 rounded-xl bg-stitch-blue font-bold text-white hover:bg-stitch-blue/90 transition">
-                        Entsperren
+            <!-- Auth Form -->
+            <div id="adminAuthSection" class="py-8 text-center space-y-4">
+                <p class="text-xs text-sky-200/80">Gib den 4-stelligen Admin-PIN ein:</p>
+                <input type="password" id="adminPassInput" placeholder="PIN" maxlength="4" class="bg-slate-950 border border-sky-800 rounded-xl px-4 py-2 text-center text-lg tracking-widest text-white outline-none focus:border-sky-400">
+                <div>
+                    <button onclick="checkAdminPass()" class="px-6 py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded-xl text-xs transition-colors shadow-md">
+                        Anmelden
                     </button>
-                </form>
-                <p id="adminPinError" class="text-rose-400 text-xs mt-2 hidden font-medium">Falscher PIN!</p>
+                </div>
+                <p id="adminAuthErr" class="text-xs text-rose-400 hidden">Falscher PIN! (Standard: 1234)</p>
             </div>
 
-            <!-- Admin Content Section (Hidden until PIN verified) -->
-            <div id="adminContentSection" class="hidden flex-col flex-grow overflow-hidden space-y-4">
-                <!-- Action Tools -->
-                <div class="flex flex-wrap items-center justify-between gap-3 bg-stitch-900/60 p-3 rounded-2xl border border-slate-800">
-                    <div class="flex items-center gap-2">
-                        <button id="btnOpenAll" class="px-3 py-1.5 rounded-lg bg-stitch-blue/20 text-stitch-ice border border-stitch-blue/40 text-xs font-bold hover:bg-stitch-blue hover:text-white transition">
-                            <i class="fa-solid fa-lock-open mr-1"></i> Alle öffnen
+            <!-- Admin Panel Content -->
+            <div id="adminPanelContent" class="hidden flex-col flex-grow overflow-hidden space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-950/60 rounded-2xl border border-sky-900/30">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="saveAdminChanges()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Live Speichern
                         </button>
-                        <button id="btnLockAll" class="px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-bold hover:bg-rose-600 hover:text-white transition">
-                            <i class="fa-solid fa-lock mr-1"></i> Alle sperren
+                        <button onclick="massUnlock(true)" class="px-3 py-2 bg-sky-900/60 hover:bg-sky-800 text-sky-200 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-lock-open mr-1"></i> Alle Öffnen
                         </button>
-                        <button id="btnResetRedeemed" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold hover:bg-slate-700 transition">
-                            Einlösungen zurücksetzen
+                        <button onclick="massUnlock(false)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-sky-200 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-lock mr-1"></i> Alle Sperren
+                        </button>
+                        <button onclick="resetAllToDefaults()" class="px-3 py-2 bg-rose-950/60 hover:bg-rose-900 text-rose-300 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset
                         </button>
                     </div>
-                    <button id="btnSaveAdmin" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        <span>In Firebase Speichern</span>
-                    </button>
+                    <span id="adminFeedback" class="text-xs font-medium text-emerald-400 min-h-[16px]"></span>
                 </div>
 
-                <!-- Table Editor -->
-                <div class="overflow-y-auto flex-grow pr-1 space-y-3" id="adminDoorsContainer">
-                    <!-- Door Edit Cards dynamic insertion -->
+                <div class="flex-grow overflow-y-auto pr-2 space-y-3">
+                    <div id="adminDaysList" class="space-y-3">
+                        <!-- Admin Rows -->
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-sky-900/40 flex justify-between items-center">
+                    <span class="text-xs text-gray-500">PIN: <code class="text-sky-400">1234</code></span>
+                    <button onclick="closeAdminModal()" class="px-6 py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold rounded-xl">
+                        Schließen
+                    </button>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <!-- Application Logic Script -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Firebase Configuration
+        const ADMIN_PIN = "1234";
+
+        // FIREBASE CONFIGURATION
         const firebaseConfig = {
             apiKey: "AIzaSyA3wLoh9_Hmf-9vbBjI49sU7gVjbkLQcWA",
             authDomain: "xmas2026-c0eba.firebaseapp.com",
@@ -292,417 +394,551 @@
             databaseURL: "https://xmas2026-c0eba-default-rtdb.europe-west1.firebasedatabase.app"
         };
 
-        // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.database();
-        const dbRef = db.ref('doors');
+        let dbRef = null;
+        let isFirebaseConnected = false;
 
-        // Default Doors Generator
-        const defaultCategories = ['Unterhaltung', 'Verwöhnen', 'Food & Drink', 'Aktivität', 'Romantik', 'Joker'];
-        function generateDefaultDoors() {
-            const doors = {};
-            for (let i = 1; i <= 24; i++) {
-                doors[i] = {
-                    day: i,
-                    code: (10000 + i).toString(),
-                    title: `Überraschung Tag ${i}`,
-                    category: defaultCategories[(i - 1) % defaultCategories.length],
-                    message: `Dies ist deine ganz besondere Überraschung für Tag ${i}! Genieße diesen zauberhaften Adventsmoment. ❤️`,
-                    unlocked: false,
-                    redeemed: false
-                };
-            }
-            return doors;
-        }
-
-        // State Store
-        let doorsData = {};
-        let currentOpenDay = null;
-
-        // Sound Effect Synth (Web Audio API)
+        // Sound Magic (Web Audio API Glockenspiel)
         function playChimeSound() {
             try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
-                const now = ctx.currentTime;
-                
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
                 const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
                 notes.forEach((freq, idx) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-                    
-                    gain.gain.setValueAtTime(0.3, now + idx * 0.1);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.1 + 0.6);
-                    
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.12 + 0.6);
                     osc.connect(gain);
                     gain.connect(ctx.destination);
-                    
-                    osc.start(now + idx * 0.1);
-                    osc.stop(now + idx * 0.1 + 0.6);
+                    osc.start(ctx.currentTime + idx * 0.12);
+                    osc.stop(ctx.currentTime + idx * 0.12 + 0.6);
                 });
-            } catch (e) {
-                console.log('Audio error:', e);
+            } catch(e) {}
+        }
+
+        // 24 Vordefinierte Türchen mit Standard-Codes (10001 - 10024)
+        const DEFAULT_CALENDAR_DATA = [
+            { day: 1, code: "10001", title: "Film-Aussuch-Recht 🎬", category: "Unterhaltung", message: "Aloha! Heute darfst du komplett alleine entscheiden, welchen Disney-Film wir heute Abend schauen! ❤️", unlocked: false, redeemed: false },
+            { day: 2, code: "10002", title: "Rückenmassage (20 Min) 💆‍♀️", category: "Verwöhnen", message: "Ohana heißt Familie! Du hast dir eine 20-minütige entspannende Rückenmassage verdient.", unlocked: false, redeemed: false },
+            { day: 3, code: "10003", title: "Lieblingsessen Kochen 🍝", category: "Food", message: "Ich koche dir heute dein absolutes Lieblingsgericht!", unlocked: false, redeemed: false },
+            { day: 4, code: "10004", title: "Kaffee ans Bett ☕", category: "Verwöhnen", message: "Morgen darfst du im Bett liegen bleiben und kriegst frischen Kaffee/Kakao ans Bett serviert.", unlocked: false, redeemed: false },
+            { day: 5, code: "10005", title: "Kiosksnack Gutschein 🍫", category: "Food", message: "Beim nächsten Einkauf geht eine Nascherei deiner Wahl komplett auf mich.", unlocked: false, redeemed: false },
+            { day: 6, code: "10006", title: "Nikolaus Überraschungs-Date 🌺", category: "Aktivität", message: "Alles Liebe zum Nikolaus! Ich habe ein kleines Überraschungs-Date für uns vorbereitet.", unlocked: false, redeemed: false },
+            { day: 7, code: "10007", title: "Couch-Gaming-Abend 🎮", category: "Unterhaltung", message: "Ein gemütlicher Gaming-Abend auf der Couch gehört heute dir.", unlocked: false, redeemed: false },
+            { day: 8, code: "10008", title: "Kuschel-Garantie 🧸", category: "Romantik", message: "Sofort einlösbar für unbegrenzte Kuschel- und Aufwärmzeit auf der Couch!", unlocked: false, redeemed: false },
+            { day: 9, code: "10009", title: "Nachtspaziergang & Kakao 🌙", category: "Aktivität", message: "Wir machen einen Spaziergang mit heißem Kakao to-go eingekuschelt in dicke Jacken.", unlocked: false, redeemed: false },
+            { day: 10, code: "10010", title: "Chauffeur-Dienst 🚗", category: "Verwöhnen", message: "Egal wie kalt es ist: Ich fahre dich heute wo du möchtest hin.", unlocked: false, redeemed: false },
+            { day: 11, code: "10011", title: "Plätzchen-Back-Party 🍪", category: "Food", message: "Wir backen zusammen Plätzchen mit Disney-Weihnachtsmusik!", unlocked: false, redeemed: false },
+            { day: 12, code: "10012", title: "Fußmassage Deluxe 🦶", category: "Verwöhnen", message: "Nach einem langen Tag hast du dir eine entspannende Fußmassage verdient.", unlocked: false, redeemed: false },
+            { day: 13, code: "10013", title: "Der 'Du hast Recht' Joker 🏆", category: "Joker", message: "Setze diesen Joker in einer Diskussion ein und ich muss dir sofort zustimmen!", unlocked: false, redeemed: false },
+            { day: 14, code: "10014", title: "Dessert Bringdienst 🍦", category: "Food", message: "Ich flitze los und bringe dir dein Lieblings-Eis oder Dessert.", unlocked: false, redeemed: false },
+            { day: 15, code: "10015", title: "Spontaner Tagesausflug 🗺️", category: "Aktivität", message: "Wir machen am Wochenende einen Ausflug an einen wunderschönen Ort.", unlocked: false, redeemed: false },
+            { day: 16, code: "10016", title: "2 Stunden Me-Time 🛁", category: "Verwöhnen", message: "Ich nehme dir alle Aufgaben ab und du hast 2 Stunden absolute Entspannung.", unlocked: false, redeemed: false },
+            { day: 17, code: "10017", title: "Spa- & Wellness-Abend 🕯️", category: "Verwöhnen", message: "Gemütlicher Wellness-Abend mit Kerzenlicht, Gesichtsmasken und Musik.", unlocked: false, redeemed: false },
+            { day: 18, code: "10018", title: "Frühstück im Bett 🥐", category: "Food", message: "Sonntags-Frühstück komplett ans Bett serviert mit allem was du magst.", unlocked: false, redeemed: false },
+            { day: 19, code: "10019", title: "Foto-Shooting Moment 📸", category: "Romantik", message: "Wir machen schöne neue Pärchenfotos für unsere Erinnerungen.", unlocked: false, redeemed: false },
+            { day: 20, code: "10020", title: "Wunsch-Playlist Abend 🎶", category: "Unterhaltung", message: "Den ganzen Abend läuft nur deine Lieblingsmusik!", unlocked: false, redeemed: false },
+            { day: 21, code: "10021", title: "Handgeschriebener Brief ✉️", category: "Romantik", message: "Ich habe dir einen persönlichen Liebesbrief geschrieben.", unlocked: false, redeemed: false },
+            { day: 22, code: "10022", title: "Kino-Home-Snack-Bar 🍿", category: "Food", message: "Ich bereite ein großes Snack-Tablett für unseren Heim-Kinoabend vor.", unlocked: false, redeemed: false },
+            { day: 23, code: "10023", title: "Vorfreude-Talk bei Kerzen 🕯️", category: "Romantik", message: "Gemütlicher Abend bei Kerzenlicht und Vorfreude auf morgen.", unlocked: false, redeemed: false },
+            { day: 24, code: "10024", title: "Der Master-Wunsch-Joker 🎁", category: "Joker", message: "Frohe Weihnachten! Dieser Gutschein erfüllt dir einen ganz besonderen Wunsch deiner Wahl. ❤️", unlocked: false, redeemed: false }
+        ];
+
+        let calendarData = [...DEFAULT_CALENDAR_DATA];
+        let activeDayForModal = null;
+        let isAdminLoggedIn = false;
+
+        // Init App & Firebase
+        window.addEventListener('DOMContentLoaded', () => {
+            initFirebaseSync();
+            renderCalendarGrid();
+            renderHistoryGrid();
+            updateStats();
+            initStarCanvas();
+        });
+
+        // Initialize Firebase Realtime Database Live Listener
+        function initFirebaseSync() {
+            try {
+                if (typeof firebase !== 'undefined') {
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    }
+                    dbRef = firebase.database().ref('doors');
+
+                    // Realtime Listener
+                    dbRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data && Array.isArray(data) && data.length > 0) {
+                            calendarData = data;
+                        } else {
+                            dbRef.set(DEFAULT_CALENDAR_DATA);
+                            calendarData = [...DEFAULT_CALENDAR_DATA];
+                        }
+                        
+                        isFirebaseConnected = true;
+                        updateSyncBadge(true, "Live mit Firebase verbunden");
+                        refreshUI();
+                    }, (error) => {
+                        console.warn("Firebase listener error:", error);
+                        useLocalFallback();
+                    });
+                } else {
+                    useLocalFallback();
+                }
+            } catch(e) {
+                console.warn("Firebase init error:", e);
+                useLocalFallback();
             }
         }
 
-        // Particle Particle Celebration
-        function triggerCelebration() {
-            const colors = ['#0284c7', '#38bdf8', '#f472b6', '#fb7185', '#ffffff'];
-            for (let i = 0; i < 40; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'fixed pointer-events-none z-50 rounded-full';
-                const size = Math.random() * 8 + 6;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.left = '50vw';
-                particle.style.top = '50vh';
-                
-                document.body.appendChild(particle);
+        function useLocalFallback() {
+            isFirebaseConnected = false;
+            updateSyncBadge(false, "Lokaler Modus (Offline)");
+            const saved = localStorage.getItem('stitch_adventskalender_data');
+            if (saved) {
+                try { calendarData = JSON.parse(saved); } catch(e) { calendarData = [...DEFAULT_CALENDAR_DATA]; }
+            } else {
+                calendarData = [...DEFAULT_CALENDAR_DATA];
+            }
+            refreshUI();
+        }
 
-                const destinationX = (Math.random() - 0.5) * window.innerWidth * 0.8;
-                const destinationY = (Math.random() - 0.5) * window.innerHeight * 0.8;
-                const rotation = Math.random() * 360;
-
-                const animation = particle.animate([
-                    { transform: 'translate(0, 0) scale(1) rotate(0deg)', opacity: 1 },
-                    { transform: `translate(${destinationX}px, ${destinationY}px) scale(0) rotate(${rotation}deg)`, opacity: 0 }
-                ], {
-                    duration: 1000 + Math.random() * 1000,
-                    easing: 'cubic-bezier(0, .9, .57, 1)',
-                    delay: Math.random() * 100
-                });
-
-                animation.onfinish = () => particle.remove();
+        function updateSyncBadge(connected, text) {
+            const dot = document.getElementById('syncDot');
+            const label = document.getElementById('syncText');
+            if (connected) {
+                dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+                label.textContent = text;
+            } else {
+                dot.className = "w-2 h-2 rounded-full bg-amber-400";
+                label.textContent = text;
             }
         }
 
-        // Render Doors Grid
-        function renderDoorsGrid() {
-            const grid = document.getElementById('doorsGrid');
+        function saveCalendarData() {
+            if (isFirebaseConnected && dbRef) {
+                dbRef.set(calendarData).catch(err => {
+                    console.error("Firebase write error:", err);
+                    localStorage.setItem('stitch_adventskalender_data', JSON.stringify(calendarData));
+                });
+            } else {
+                localStorage.setItem('stitch_adventskalender_data', JSON.stringify(calendarData));
+            }
+        }
+
+        function refreshUI() {
+            renderCalendarGrid();
+            renderHistoryGrid();
+            updateStats();
+            if (isAdminLoggedIn) renderAdminDaysList();
+        }
+
+        function renderCalendarGrid() {
+            const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
 
-            let unlockedCount = 0;
-            let redeemedCount = 0;
-
-            for (let i = 1; i <= 24; i++) {
-                const door = doorsData[i] || { day: i, unlocked: false, redeemed: false, title: '', category: 'Allgemein' };
-                if (door.unlocked) unlockedCount++;
-                if (door.redeemed) redeemedCount++;
-
+            calendarData.forEach(item => {
                 const card = document.createElement('div');
-                card.className = `glass-card rounded-2xl p-4 flex flex-col justify-between border transition duration-300 relative overflow-hidden group ${
-                    door.unlocked 
-                        ? door.redeemed 
-                            ? 'border-emerald-500/40 bg-emerald-950/20' 
-                            : 'border-stitch-ice/40 hover:border-stitch-angel hover:scale-105 cursor-pointer shadow-lg' 
-                        : 'border-slate-800 opacity-80'
+                card.className = `glass-card rounded-2xl p-4 flex flex-col justify-between items-center text-center relative overflow-hidden transition-all duration-300 border ${
+                    item.unlocked 
+                        ? 'border-sky-400/50 bg-sky-950/30 shadow-lg shadow-sky-500/10 hover:border-sky-400' 
+                        : 'border-white/5 opacity-80 hover:opacity-100 hover:border-white/20'
                 }`;
 
-                if (door.unlocked) {
-                    card.onclick = () => openRewardModal(door.day);
+                if (item.unlocked) {
+                    card.innerHTML = `
+                        <div class="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded-full ${item.redeemed ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/40' : 'bg-sky-950 text-sky-300 border border-sky-800/40'} font-semibold">
+                            ${item.redeemed ? 'Eingelöst' : 'Offen'}
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center my-2 text-lg font-bold border border-sky-400/30">
+                            ${item.day}
+                        </div>
+                        <h4 class="text-xs sm:text-sm font-semibold text-white line-clamp-1 mb-1">${item.title}</h4>
+                        <p class="text-[11px] text-sky-200/60 line-clamp-2 mb-3 px-1">${item.message}</p>
+                        <button onclick="openRewardModal(${item.day})" class="w-full py-1.5 px-3 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-xs font-medium border border-sky-400/30 transition-colors">
+                            Ansehen <i class="fa-solid fa-arrow-right text-[10px] ml-1"></i>
+                        </button>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="w-10 h-10 rounded-xl bg-slate-800/60 text-slate-500 flex items-center justify-center my-3 text-base font-bold">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <div class="text-sm font-bold text-gray-300 mb-1">Türchen ${item.day}</div>
+                        <p class="text-[11px] text-slate-500 mb-3 blur-[2px] select-none">Code erforderlich</p>
+                        <div class="w-full py-1.5 px-2 rounded-xl bg-slate-950 text-slate-600 text-[11px] border border-white/5 font-mono">
+                            *****
+                        </div>
+                    `;
                 }
 
+                grid.appendChild(card);
+            });
+        }
+
+        function renderHistoryGrid() {
+            const grid = document.getElementById('historyGrid');
+            const emptyMsg = document.getElementById('emptyHistoryMsg');
+            const historyBadge = document.getElementById('historyBadge');
+            
+            grid.innerHTML = '';
+            const unlockedItems = calendarData.filter(d => d.unlocked);
+            historyBadge.textContent = unlockedItems.length;
+
+            if (unlockedItems.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                return;
+            } else {
+                emptyMsg.classList.add('hidden');
+            }
+
+            unlockedItems.sort((a,b) => a.day - b.day).forEach(item => {
+                const card = document.createElement('div');
+                card.onclick = () => openRewardModal(item.day);
+                card.className = "glass-card rounded-2xl p-5 border border-sky-500/20 hover:border-sky-400/60 transition-all duration-300 cursor-pointer group relative overflow-hidden";
+                
                 card.innerHTML = `
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="w-8 h-8 rounded-xl ${door.unlocked ? 'bg-stitch-ice/20 text-stitch-ice' : 'bg-slate-800 text-slate-500'} font-extrabold text-sm flex items-center justify-center">
-                            ${door.day}
-                        </span>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                            door.unlocked 
-                                ? door.redeemed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-stitch-angel/20 text-stitch-angel'
-                                : 'bg-slate-800 text-slate-500'
-                        }">
-                            ${door.unlocked ? (door.redeemed ? 'Eingelöst' : 'Offen') : 'Gesperrt'}
-                        </span>
-                    </div>
-
-                    <div class="my-2">
-                        ${door.unlocked ? `
-                            <p class="text-xs text-stitch-ice font-bold uppercase tracking-wide truncate mb-0.5">${door.category || 'Geschenk'}</p>
-                            <p class="text-sm font-bold text-white truncate">${door.title}</p>
-                        ` : `
-                            <div class="flex flex-col items-center justify-center py-2 text-slate-600">
-                                <i class="fa-solid fa-lock text-xl mb-1"></i>
-                                <span class="text-[11px] font-medium">Code erforderlich</span>
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-2xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-gift"></i>
                             </div>
-                        `}
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">Tag ${item.day}</span>
+                                <h4 class="text-base font-bold text-white group-hover:text-sky-300 transition-colors">${item.title}</h4>
+                            </div>
+                        </div>
+                        <span class="text-[10px] px-2.5 py-1 rounded-full font-semibold ${item.redeemed ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/40' : 'bg-sky-950 text-sky-300 border border-sky-800/40'}">
+                            ${item.redeemed ? 'Eingelöst' : 'Bereit'}
+                        </span>
                     </div>
-
-                    ${door.unlocked ? `
-                        <button class="w-full mt-2 py-1.5 rounded-lg bg-stitch-blue/20 hover:bg-stitch-blue text-stitch-ice hover:text-white text-xs font-bold transition flex items-center justify-center gap-1">
-                            <span>Ansehen</span>
-                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                        </button>
-                    ` : ''}
+                    <p class="text-xs text-sky-100/80 italic line-clamp-2 mb-3 bg-slate-950/50 p-2.5 rounded-xl border border-sky-900/30">
+                        "${item.message}"
+                    </p>
+                    <div class="flex items-center justify-between text-[11px] text-gray-400 pt-2 border-t border-white/5">
+                        <span class="text-sky-400/80"><i class="fa-solid fa-sparkles mr-1"></i>Klicken zum Abspielen</span>
+                        <span class="text-sky-300 font-medium group-hover:translate-x-1 transition-transform">
+                            Ansehen <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </span>
+                    </div>
                 `;
 
                 grid.appendChild(card);
-            }
-
-            document.getElementById('unlockedCount').innerText = `${unlockedCount} / 24`;
-            document.getElementById('redeemedCount').innerText = `${redeemedCount} / 24`;
+            });
         }
 
-        // Modal Controls
-        function openRewardModal(day) {
-            const door = doorsData[day];
-            if (!door) return;
-            currentOpenDay = day;
+        function handleCodeSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('codeInput');
+            const code = input.value.trim().toUpperCase();
 
-            document.getElementById('modalDayBadge').innerText = `Türchen ${door.day}`;
-            document.getElementById('modalCategoryBadge').innerText = door.category || 'Geschenk';
-            document.getElementById('modalTitle').innerText = door.title || 'Deine Überraschung';
-            document.getElementById('modalMessage').innerText = door.message || 'Keine Nachricht hinterlegt.';
-            
-            updateRedeemBtnUI(door.redeemed);
+            if (!code || code.length !== 5) {
+                showFeedback("Bitte gib einen 5-stelligen Code ein!", "text-rose-400");
+                return;
+            }
+
+            const match = calendarData.find(item => item.code.toUpperCase() === code);
+
+            if (match) {
+                match.unlocked = true;
+                saveCalendarData();
+                input.value = '';
+                showFeedback(`✨ Code richtig! Öffne Türchen Tag ${match.day}...`, "text-sky-300");
+                
+                setTimeout(() => {
+                    openRewardModal(match.day, true);
+                }, 400);
+            } else {
+                showFeedback("❌ Ungültiger Code. Überprüfe deinen 3D-Druck Kalender!", "text-rose-400");
+            }
+        }
+
+        function showFeedback(msg, colorClass) {
+            const feedback = document.getElementById('codeFeedback');
+            feedback.textContent = msg;
+            feedback.className = `mt-4 text-xs sm:text-sm font-medium transition-all ${colorClass}`;
+            setTimeout(() => { feedback.textContent = ''; }, 4000);
+        }
+
+        // Open Modal
+        function openRewardModal(day, triggerParticles = true) {
+            const item = calendarData.find(d => d.day === day);
+            if (!item) return;
+
+            activeDayForModal = day;
+
+            document.getElementById('modalDayNumber').textContent = `Türchen Tag ${item.day}`;
+            document.getElementById('modalTitle').textContent = item.title;
+            document.getElementById('modalMessage').textContent = item.message;
+            document.getElementById('modalCategoryBadge').textContent = item.category || "Gutschein";
+
+            updateModalRedeemStatusUI(item.redeemed);
 
             const modal = document.getElementById('rewardModal');
+            const modalContent = document.getElementById('rewardModalContent');
+
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
             }, 10);
+
+            if (triggerParticles) {
+                playChimeSound();
+                spawnCelebrationParticles();
+            }
+        }
+
+        function updateModalRedeemStatusUI(isRedeemed) {
+            const btn = document.getElementById('modalRedeemBtn');
+            const btnText = document.getElementById('modalRedeemBtnText');
+            const statusTag = document.getElementById('modalStatusTag');
+
+            if (isRedeemed) {
+                btn.className = "w-full py-3.5 px-6 rounded-2xl bg-sky-950/60 hover:bg-sky-900/60 text-sky-300 font-semibold text-sm border border-sky-800/40 transition-all flex items-center justify-center gap-2";
+                btnText.textContent = "Als 'Offen' markieren";
+                statusTag.classList.remove('hidden');
+            } else {
+                btn.className = "w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg transition-all flex items-center justify-center gap-2";
+                btnText.textContent = "Als 'Eingelöst' markieren";
+                statusTag.classList.add('hidden');
+            }
+        }
+
+        function toggleRedeemCurrentDay() {
+            if (!activeDayForModal) return;
+            const item = calendarData.find(d => d.day === activeDayForModal);
+            if (item) {
+                item.redeemed = !item.redeemed;
+                saveCalendarData();
+                updateModalRedeemStatusUI(item.redeemed);
+            }
         }
 
         function closeRewardModal() {
             const modal = document.getElementById('rewardModal');
+            const modalContent = document.getElementById('rewardModalContent');
+
             modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+
             setTimeout(() => {
                 modal.classList.add('hidden');
-                currentOpenDay = null;
+                activeDayForModal = null;
             }, 300);
         }
 
-        function updateRedeemBtnUI(isRedeemed) {
-            const btn = document.getElementById('toggleRedeemBtn');
-            const txt = document.getElementById('redeemBtnText');
-            if (isRedeemed) {
-                btn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm bg-emerald-600/30 border border-emerald-500 text-emerald-300 hover:bg-emerald-600 hover:text-white transition flex items-center justify-center gap-2";
-                txt.innerText = "Als EINGELÖST markiert ✓";
-            } else {
-                btn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm bg-stitch-angel/20 border border-stitch-angel/40 text-stitch-angel hover:bg-stitch-angel hover:text-white transition flex items-center justify-center gap-2";
-                txt.innerText = "Als eingelöst markieren";
+        // Particle Effect
+        function spawnCelebrationParticles() {
+            const symbols = ['🌺', '✨', '⭐', '💙', '💖', '❄️'];
+            const container = document.body;
+
+            for (let i = 0; i < 35; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'celebration-particle';
+                particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                const startX = Math.random() * window.innerWidth;
+                const size = Math.random() * 22 + 16;
+                const duration = Math.random() * 2 + 2.5;
+
+                particle.style.left = `${startX}px`;
+                particle.style.bottom = `-20px`;
+                particle.style.fontSize = `${size}px`;
+                particle.style.animationDuration = `${duration}s`;
+
+                container.appendChild(particle);
+
+                setTimeout(() => { particle.remove(); }, duration * 1000);
             }
         }
 
-        // Code Form Handling
-        document.getElementById('codeForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const input = document.getElementById('codeInput');
-            const code = input.value.trim();
-            const err = document.getElementById('codeError');
-            err.classList.add('hidden');
+        function updateStats() {
+            const unlocked = calendarData.filter(d => d.unlocked).length;
+            const redeemed = calendarData.filter(d => d.redeemed).length;
 
-            if (!code) return;
+            document.getElementById('unlockedCount').textContent = unlocked;
+            document.getElementById('redeemedCount').textContent = redeemed;
+        }
 
-            let matchedDay = null;
-            for (let day in doorsData) {
-                if (doorsData[day].code === code) {
-                    matchedDay = day;
-                    break;
-                }
-            }
+        function switchTab(tab) {
+            const tabMain = document.getElementById('tabMain');
+            const tabHistory = document.getElementById('tabHistory');
+            const btnMain = document.getElementById('navMainBtn');
+            const btnHistory = document.getElementById('navHistoryBtn');
 
-            if (matchedDay) {
-                doorsData[matchedDay].unlocked = true;
-                dbRef.child(matchedDay).update({ unlocked: true });
-                input.value = '';
-                playChimeSound();
-                triggerCelebration();
-                openRewardModal(matchedDay);
+            if (tab === 'main') {
+                tabMain.classList.remove('hidden');
+                tabHistory.classList.add('hidden');
+
+                btnMain.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/20 flex items-center gap-1.5";
+                btnHistory.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300 flex items-center gap-1.5";
             } else {
-                err.innerText = "Ungültiger Tages-Code. Bitte überprüfe deine Eingabe!";
+                tabMain.classList.add('hidden');
+                tabHistory.classList.remove('hidden');
+
+                btnHistory.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/20 flex items-center gap-1.5";
+                btnMain.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300 flex items-center gap-1.5";
+            }
+        }
+
+        // ADMIN PANEL
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+            if (isAdminLoggedIn) {
+                showAdminPanel();
+            } else {
+                document.getElementById('adminAuthSection').classList.remove('hidden');
+                document.getElementById('adminPanelContent').classList.add('hidden');
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function checkAdminPass() {
+            const pass = document.getElementById('adminPassInput').value;
+            const err = document.getElementById('adminAuthErr');
+
+            if (pass === ADMIN_PIN) {
+                isAdminLoggedIn = true;
+                err.classList.add('hidden');
+                showAdminPanel();
+            } else {
                 err.classList.remove('hidden');
             }
-        });
+        }
 
-        // Redeem Toggle inside Modal
-        document.getElementById('toggleRedeemBtn').addEventListener('click', () => {
-            if (!currentOpenDay || !doorsData[currentOpenDay]) return;
-            const newState = !doorsData[currentOpenDay].redeemed;
-            doorsData[currentOpenDay].redeemed = newState;
-            dbRef.child(currentOpenDay).update({ redeemed: newState });
-            updateRedeemBtnUI(newState);
-        });
+        function showAdminPanel() {
+            document.getElementById('adminAuthSection').classList.add('hidden');
+            document.getElementById('adminPanelContent').classList.remove('hidden');
+            document.getElementById('adminPanelContent').classList.add('flex');
+            renderAdminDaysList();
+        }
 
-        document.getElementById('closeRewardModal').addEventListener('click', closeRewardModal);
-        document.getElementById('closeRewardBtn').addEventListener('click', closeRewardModal);
+        function renderAdminDaysList() {
+            const list = document.getElementById('adminDaysList');
+            list.innerHTML = '';
 
-        // --- Admin Panel Logic ---
-        const adminModal = document.getElementById('adminModal');
-        const adminPinSection = document.getElementById('adminPinSection');
-        const adminContentSection = document.getElementById('adminContentSection');
-        const adminPinForm = document.getElementById('adminPinForm');
-        const adminPinInput = document.getElementById('adminPinInput');
-        const adminPinError = document.getElementById('adminPinError');
+            calendarData.forEach((item) => {
+                const row = document.createElement('div');
+                row.className = "bg-slate-950 p-4 rounded-2xl border border-sky-900/40 space-y-3";
 
-        document.getElementById('adminTriggerBtn').addEventListener('click', () => {
-            adminModal.classList.remove('hidden');
-        });
-
-        document.getElementById('closeAdminModal').addEventListener('click', () => {
-            adminModal.classList.add('hidden');
-        });
-
-        adminPinForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (adminPinInput.value === '1234') {
-                adminPinSection.classList.add('hidden');
-                adminContentSection.classList.remove('hidden');
-                adminContentSection.classList.add('flex');
-                renderAdminEditor();
-            } else {
-                adminPinError.classList.remove('hidden');
-            }
-        });
-
-        function renderAdminEditor() {
-            const container = document.getElementById('adminDoorsContainer');
-            container.innerHTML = '';
-
-            for (let i = 1; i <= 24; i++) {
-                const door = doorsData[i] || { day: i, code: 10000 + i, title: '', category: '', message: '', unlocked: false, redeemed: false };
-                const card = document.createElement('div');
-                card.className = "p-4 rounded-2xl bg-stitch-900/90 border border-slate-700/80 space-y-3";
-                
-                card.innerHTML = `
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
-                        <span class="font-extrabold text-stitch-ice text-sm">Türchen ${i}</span>
-                        <div class="flex items-center gap-4 text-xs">
-                            <label class="flex items-center gap-1.5 cursor-pointer text-slate-300">
-                                <input type="checkbox" id="admin_unlocked_${i}" ${door.unlocked ? 'checked' : ''} class="rounded bg-slate-800 border-slate-600 text-stitch-blue">
-                                Freigeschaltet
+                row.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-sky-900/30">
+                        <span class="text-sm font-bold text-sky-300">Türchen Tag ${item.day}</span>
+                        <div class="flex items-center space-x-3 text-xs">
+                            <label class="flex items-center space-x-1 cursor-pointer">
+                                <input type="checkbox" id="admin_unlock_${item.day}" ${item.unlocked ? 'checked' : ''} class="rounded bg-slate-900 border-sky-800 text-sky-500">
+                                <span class="text-gray-300">Freigeschaltet</span>
                             </label>
-                            <label class="flex items-center gap-1.5 cursor-pointer text-slate-300">
-                                <input type="checkbox" id="admin_redeemed_${i}" ${door.redeemed ? 'checked' : ''} class="rounded bg-slate-800 border-slate-600 text-stitch-angel">
-                                Eingelöst
+                            <label class="flex items-center space-x-1 cursor-pointer">
+                                <input type="checkbox" id="admin_redeem_${item.day}" ${item.redeemed ? 'checked' : ''} class="rounded bg-slate-900 border-sky-800 text-emerald-500">
+                                <span class="text-gray-300">Eingelöst</span>
                             </label>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-[11px] text-slate-400 font-bold mb-1">Code (5-stellig)</label>
-                            <input type="text" id="admin_code_${i}" value="${door.code || ''}" class="w-full px-3 py-1.5 text-xs rounded-lg bg-stitch-800 border border-slate-700 text-white">
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">5-Stelliger Code</label>
+                            <input type="text" id="admin_code_${item.day}" value="${item.code}" maxlength="5" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs font-mono text-sky-300 uppercase">
                         </div>
                         <div>
-                            <label class="block text-[11px] text-slate-400 font-bold mb-1">Titel</label>
-                            <input type="text" id="admin_title_${i}" value="${door.title || ''}" class="w-full px-3 py-1.5 text-xs rounded-lg bg-stitch-800 border border-slate-700 text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-400 font-bold mb-1">Kategorie</label>
-                            <input type="text" id="admin_category_${i}" value="${door.category || ''}" class="w-full px-3 py-1.5 text-xs rounded-lg bg-stitch-800 border border-slate-700 text-white">
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Titel / Gutschein</label>
+                            <input type="text" id="admin_title_${item.day}" value="${item.title}" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs text-white">
                         </div>
                     </div>
+
                     <div>
-                        <label class="block text-[11px] text-slate-400 font-bold mb-1">Geschenk / Nachricht</label>
-                        <textarea id="admin_message_${i}" rows="2" class="w-full px-3 py-1.5 text-xs rounded-lg bg-stitch-800 border border-slate-700 text-white resize-none">${door.message || ''}</textarea>
+                        <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Geschenk / Nachricht</label>
+                        <textarea id="admin_msg_${item.day}" rows="2" class="w-full bg-slate-900 border border-sky-900 rounded-xl p-2 text-xs text-sky-100 resize-none">${item.message}</textarea>
                     </div>
                 `;
-                container.appendChild(card);
-            }
-        }
 
-        // Admin Action Handlers
-        document.getElementById('btnSaveAdmin').addEventListener('click', () => {
-            const updatedDoors = {};
-            for (let i = 1; i <= 24; i++) {
-                updatedDoors[i] = {
-                    day: i,
-                    code: document.getElementById(`admin_code_${i}`).value.trim(),
-                    title: document.getElementById(`admin_title_${i}`).value.trim(),
-                    category: document.getElementById(`admin_category_${i}`).value.trim(),
-                    message: document.getElementById(`admin_message_${i}`).value.trim(),
-                    unlocked: document.getElementById(`admin_unlocked_${i}`).checked,
-                    redeemed: document.getElementById(`admin_redeemed_${i}`).checked
-                };
-            }
-            dbRef.set(updatedDoors, (err) => {
-                if (!err) {
-                    alert('Erfolgreich in Firebase gespeichert!');
-                } else {
-                    alert('Fehler beim Speichern: ' + err.message);
-                }
+                list.appendChild(row);
             });
-        });
-
-        document.getElementById('btnOpenAll').addEventListener('click', () => {
-            for (let i = 1; i <= 24; i++) {
-                const el = document.getElementById(`admin_unlocked_${i}`);
-                if (el) el.checked = true;
-            }
-        });
-
-        document.getElementById('btnLockAll').addEventListener('click', () => {
-            for (let i = 1; i <= 24; i++) {
-                const el = document.getElementById(`admin_unlocked_${i}`);
-                if (el) el.checked = false;
-            }
-        });
-
-        document.getElementById('btnResetRedeemed').addEventListener('click', () => {
-            for (let i = 1; i <= 24; i++) {
-                const el = document.getElementById(`admin_redeemed_${i}`);
-                if (el) el.checked = false;
-            }
-        });
-
-        // Firebase Sync Engine
-        dbRef.on('value', (snapshot) => {
-            const val = snapshot.val();
-            if (val) {
-                doorsData = val;
-            } else {
-                // Initialize defaults if DB is empty
-                doorsData = generateDefaultDoors();
-                dbRef.set(doorsData);
-            }
-            renderDoorsGrid();
-            if (currentOpenDay && doorsData[currentOpenDay]) {
-                openRewardModal(currentOpenDay);
-            }
-        });
-
-        // Animated Canvas Background (Starfield / Snow)
-        const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            stars = [];
-            for (let i = 0; i < 70; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 1.5 + 0.5,
-                    alpha: Math.random(),
-                    speed: Math.random() * 0.02 + 0.005
-                });
-            }
         }
 
-        function animateBg() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(s => {
-                s.alpha += s.speed;
-                if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
+        function saveAdminChanges() {
+            calendarData.forEach(item => {
+                const codeInput = document.getElementById(`admin_code_${item.day}`);
+                const titleInput = document.getElementById(`admin_title_${item.day}`);
+                const msgInput = document.getElementById(`admin_msg_${item.day}`);
+                const unlockInput = document.getElementById(`admin_unlock_${item.day}`);
+                const redeemInput = document.getElementById(`admin_redeem_${item.day}`);
+
+                if (codeInput) item.code = codeInput.value.trim().toUpperCase();
+                if (titleInput) item.title = titleInput.value.trim();
+                if (msgInput) item.message = msgInput.value.trim();
+                if (unlockInput) item.unlocked = unlockInput.checked;
+                if (redeemInput) item.redeemed = redeemInput.checked;
+            });
+
+            saveCalendarData();
+
+            const feedback = document.getElementById('adminFeedback');
+            feedback.textContent = "⚡ Live auf allen Geräten aktualisiert!";
+            setTimeout(() => { feedback.textContent = ''; }, 3000);
+        }
+
+        function massUnlock(status) {
+            calendarData.forEach(item => { item.unlocked = status; });
+            saveCalendarData();
+        }
+
+        function resetAllToDefaults() {
+            calendarData = DEFAULT_CALENDAR_DATA.map(d => ({ ...d }));
+            saveCalendarData();
+        }
+
+        // Canvas Sternen-Himmel
+        function initStarCanvas() {
+            const canvas = document.getElementById('starCanvas');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const stars = Array.from({ length: 45 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 2 + 1,
+                d: Math.random() * 0.7 + 0.2
+            }));
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "rgba(56, 189, 248, 0.6)";
                 ctx.beginPath();
-                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(56, 189, 248, ${Math.abs(s.alpha)})`;
+                for (let s of stars) {
+                    ctx.moveTo(s.x, s.y);
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2, true);
+                }
                 ctx.fill();
-            });
-            requestAnimationFrame(animateBg);
-        }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-        animateBg();
+                for (let s of stars) {
+                    s.y += s.d;
+                    if (s.y > canvas.height) {
+                        s.y = -10;
+                        s.x = Math.random() * canvas.width;
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
     </script>
 </body>
 </html>
