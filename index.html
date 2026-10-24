@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dein Persönlicher Adventskalender ✨</title>
+    <title>Stitch & Disney Adventskalender ✨</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,50 +12,56 @@
             theme: {
                 extend: {
                     colors: {
-                        gold: {
-                            300: '#fde047',
-                            400: '#facc15',
-                            500: '#eab308',
-                            600: '#ca8a04',
-                            700: '#a16207',
-                        },
-                        festive: {
-                            dark: '#0d070b',
-                            panel: '#1a0f18',
-                            card: '#241422',
-                            hover: '#321c2f',
-                            accent: '#e11d48',
-                            goldGlow: 'rgba(234, 179, 8, 0.25)',
+                        stitch: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            dark: '#030712',
+                            panel: '#0f172a',
+                            card: '#1e293b',
+                            accent: '#38bdf8',
+                            pink: '#f43f5e'
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        serif: ['Georgia', 'serif'],
+                        disney: ['Georgia', 'serif']
                     }
                 }
             }
         }
     </script>
-    <!-- FontAwesome for Icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        .font-romantic {
-            font-family: 'Great Vibes', cursive;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
         }
-        
-        /* Custom Floating Animation */
+
+        .font-stitch {
+            font-family: 'Fredoka', cursive;
+        }
+
+        /* Floating Particle Animation */
         @keyframes floatUp {
             0% {
-                transform: translateY(0) rotate(0deg) scale(0.7);
+                transform: translateY(0) rotate(0deg) scale(0.6);
                 opacity: 1;
             }
             100% {
-                transform: translateY(-100vh) rotate(360deg) scale(1.3);
+                transform: translateY(-100vh) rotate(360deg) scale(1.4);
                 opacity: 0;
             }
         }
@@ -69,24 +75,21 @@
 
         /* Glassmorphism Styling */
         .glass-panel {
-            background: rgba(26, 15, 24, 0.82);
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(234, 179, 8, 0.18);
+            border: 1px solid rgba(56, 189, 248, 0.25);
         }
 
         .glass-card {
-            background: rgba(36, 20, 34, 0.65);
+            background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* Glow Effects */
-        .glow-gold {
-            box-shadow: 0 0 25px rgba(234, 179, 8, 0.25);
-        }
-        .glow-rose {
-            box-shadow: 0 0 25px rgba(225, 29, 72, 0.3);
+        /* Glowing Effects */
+        .glow-stitch {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
         }
 
         /* Custom Scrollbar */
@@ -94,75 +97,93 @@
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #0d070b;
+            background: #030712;
         }
         ::-webkit-scrollbar-thumb {
-            background: #3a1e35;
+            background: #0c4a6e;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #e11d48;
+            background: #38bdf8;
+        }
+
+        /* Memory Game Card Styles */
+        .memory-card {
+            perspective: 1000px;
+        }
+        .memory-card-inner {
+            transition: transform 0.4s;
+            transform-style: preserve-3d;
+        }
+        .memory-card.flipped .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+        .memory-card-front, .memory-card-back {
+            backface-visibility: hidden;
+        }
+        .memory-card-back {
+            transform: rotateY(180deg);
         }
     </style>
 </head>
-<body class="bg-[#0d070b] text-gray-100 min-h-screen flex flex-col font-sans selection:bg-rose-600 selection:text-white">
+<body class="min-h-screen flex flex-col selection:bg-sky-500 selection:text-white">
 
-    <!-- Background Snow Canvas -->
-    <canvas id="snowCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+    <!-- Snow & Sparkle Background Canvas -->
+    <canvas id="starCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-50"></canvas>
 
-    <!-- Header Navigation -->
-    <header class="relative z-10 border-b border-rose-950/40 bg-[#140b12]/80 backdrop-blur-md sticky top-0">
+    <!-- HEADER / NAVIGATION -->
+    <header class="relative z-20 border-b border-sky-900/40 bg-slate-950/80 backdrop-blur-md sticky top-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center shadow-lg shadow-rose-900/40">
-                    <i class="fa-solid font-bold text-white fa-gift"></i>
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white text-xl">
+                    🌺
                 </div>
                 <div>
-                    <h1 class="font-romantic text-3xl sm:text-4xl text-amber-300 leading-none">Dein Adventskalender</h1>
-                    <p class="text-xs text-rose-300/70 tracking-wider uppercase font-medium">Voller Liebe & Überraschungen</p>
+                    <h1 class="font-stitch text-2xl sm:text-3xl text-sky-300 leading-none tracking-wide">Ohana Adventskalender</h1>
+                    <p class="text-[11px] text-sky-400/80 uppercase font-medium tracking-widest mt-0.5">Stitch & Disney Zauber 🌺✨</p>
                 </div>
             </div>
 
-            <!-- Tab Navigation Buttons -->
-            <nav class="flex items-center space-x-2 bg-rose-950/30 p-1.5 rounded-full border border-rose-900/30">
-                <button id="navMainBtn" onclick="switchTab('main')" class="px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-rose-600 text-white shadow-md">
+            <!-- Tab Buttons -->
+            <nav class="flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-2xl border border-sky-900/50">
+                <button id="navMainBtn" onclick="switchTab('main')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/20">
                     <i class="fa-solid fa-calendar-days mr-1.5"></i> Kalender
                 </button>
-                <button id="navHistoryBtn" onclick="switchTab('history')" class="px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition-all duration-300">
+                <button id="navHistoryBtn" onclick="switchTab('history')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300">
                     <i class="fa-solid fa-clock-rotate-left mr-1.5"></i> Verlauf (<span id="historyBadge">0</span>)
                 </button>
             </nav>
         </div>
     </header>
 
-    <!-- Main Content Container -->
+    <!-- MAIN CONTAINER -->
     <main class="relative z-10 flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <!-- TAB 1: MAIN KALENDER VIEW -->
         <section id="tabMain" class="space-y-8 transition-opacity duration-300">
 
             <!-- Code Input Hero Box -->
-            <div class="glass-panel rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto border border-rose-500/20 shadow-2xl relative overflow-hidden">
-                <div class="absolute -right-12 -bottom-12 w-40 h-40 bg-rose-600/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute -left-12 -top-12 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 text-center max-w-xl mx-auto border border-sky-400/30 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-12 -bottom-12 w-40 h-40 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-12 -top-12 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 mb-3">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-400/30 text-sky-300 mb-3">
                     <i class="fa-solid fa-key text-xl"></i>
                 </div>
-                <h2 class="text-xl sm:text-2xl font-bold text-white mb-2">Hast du ein Türchen geöffnet?</h2>
-                <p class="text-sm text-gray-300 mb-6 max-w-md mx-auto">
-                    Gib hier den 5-stelligen Code aus deinem gedruckten Türchen ein, um deine Überraschung freizuschalten!
+                <h2 class="text-xl sm:text-2xl font-bold text-white mb-2">3D-Kalender Code Eingeben</h2>
+                <p class="text-xs sm:text-sm text-sky-200/80 mb-6 max-w-md mx-auto">
+                    Gib den 5-stelligen Code aus deinem gedruckten Türchen ein, um das heutige Disney-Minispiel zu starten!
                 </p>
 
                 <!-- Code Input Form -->
                 <form id="codeForm" onsubmit="handleCodeSubmit(event)" class="space-y-4">
                     <div class="flex justify-center items-center gap-2 max-w-xs mx-auto">
-                        <input type="text" id="codeInput" maxlength="5" placeholder="12345" 
-                            class="w-full text-center text-2xl sm:text-3xl tracking-[0.3em] font-mono font-bold bg-black/50 border-2 border-rose-900/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-500/20 text-amber-300 rounded-2xl py-3 px-4 outline-none uppercase transition-all duration-300 placeholder-gray-700 shadow-inner">
+                        <input type="text" id="codeInput" maxlength="5" placeholder="62600" 
+                            class="w-full text-center text-2xl sm:text-3xl tracking-[0.3em] font-mono font-bold bg-slate-950/80 border-2 border-sky-800 focus:border-sky-400 focus:ring-4 focus:ring-sky-500/20 text-sky-300 rounded-2xl py-3 px-4 outline-none uppercase transition-all duration-300 placeholder-slate-700 shadow-inner">
                     </div>
                     <button type="submit" 
-                        class="w-full max-w-xs py-3.5 px-6 rounded-2xl bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-semibold text-sm shadow-lg shadow-rose-900/40 hover:shadow-rose-600/30 transform hover:-translate-y-0.5 transition-all duration-300 active:translate-y-0">
-                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Code Einlösen
+                        class="w-full max-w-xs py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold text-sm shadow-lg shadow-sky-500/20 transform hover:-translate-y-0.5 transition-all duration-300 active:translate-y-0">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Türchen Öffnen
                     </button>
                 </form>
 
@@ -170,9 +191,9 @@
             </div>
 
             <!-- Stats Bar -->
-            <div class="flex flex-wrap items-center justify-between gap-4 bg-black/40 border border-white/5 rounded-2xl p-4 px-6 text-xs sm:text-sm text-gray-400">
+            <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900/60 border border-sky-900/30 rounded-2xl p-4 px-6 text-xs sm:text-sm text-sky-200/70">
                 <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-box-open text-amber-400"></i>
+                    <i class="fa-solid fa-box-open text-sky-400"></i>
                     <span>Freigeschaltet: <strong id="unlockedCount" class="text-white">0</strong> / 24</span>
                 </div>
                 <div class="flex items-center space-x-2">
@@ -180,15 +201,15 @@
                     <span>Eingelöst: <strong id="redeemedCount" class="text-white">0</strong> / 24</span>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-sparkles text-amber-300"></i>
-                    <span>Exklusive Geschenke</span>
+                    <i class="fa-solid fa-sparkles text-sky-300"></i>
+                    <span>Ohana heißt Familie ❤️</span>
                 </div>
             </div>
 
             <!-- 24 Days Grid -->
             <div>
                 <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-grid-2 text-rose-500"></i> Alle 24 Türchen
+                    <i class="fa-solid fa-cubes text-sky-400"></i> Alle 24 Türchen
                 </h3>
                 <div id="calendarGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
                     <!-- Dynamic Grid Items -->
@@ -197,21 +218,18 @@
 
         </section>
 
-        <!-- TAB 2: EINLÖSUNGSVERLAUF (HISTORY) VIEW -->
+        <!-- TAB 2: HISTORY VIEW -->
         <section id="tabHistory" class="space-y-6 hidden transition-opacity duration-300">
-            <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10">
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-sky-400/20">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-sky-900/30">
                     <div>
                         <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-                            <i class="fa-solid fa-box-open text-amber-400"></i>
+                            <i class="fa-solid fa-star text-sky-400"></i>
                             Euer Einlösungsverlauf
                         </h2>
-                        <p class="text-sm text-gray-400 mt-1">
-                            Hier findest du alle bereits freigeschalteten Türchen. Klicke auf eine Karte, um die Animation & Gutschein-Details erneut abzuspielen!
+                        <p class="text-xs sm:text-sm text-sky-200/70 mt-1">
+                            Hier findest du alle bereits freigeschalteten Überraschungen. Klicke auf eine Karte, um das Minispiel erneut zu spielen oder die Nachricht anzuzeigen!
                         </p>
-                    </div>
-                    <div class="bg-rose-950/40 px-4 py-2 rounded-2xl border border-rose-800/30 text-rose-300 text-xs sm:text-sm font-medium">
-                        Erinnerungen Festhalten ✨
                     </div>
                 </div>
 
@@ -220,7 +238,7 @@
                 </div>
 
                 <div id="emptyHistoryMsg" class="text-center py-12 hidden">
-                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center text-gray-500">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-800/50 flex items-center justify-center text-sky-400">
                         <i class="fa-solid fa-lock text-2xl"></i>
                     </div>
                     <h4 class="text-lg font-medium text-gray-300">Noch keine Türchen freigeschaltet</h4>
@@ -232,52 +250,69 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="relative z-10 border-t border-white/5 py-6 bg-black/40 text-center text-xs text-gray-500">
+    <footer class="relative z-10 border-t border-sky-900/30 py-6 bg-slate-950/60 text-center text-xs text-gray-500">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>Made with ❤️ & 3D-Druck Liebe | Adventskalender Edition</p>
-            <div class="flex items-center space-x-4">
-                <button onclick="openAdminModal()" class="text-gray-400 hover:text-amber-400 transition-colors p-2 rounded-lg hover:bg-white/5 flex items-center gap-1.5" title="Admin Einstellungen">
-                    <i class="fa-solid fa-gear"></i> <span>Admin-Verwaltung</span>
-                </button>
-            </div>
+            <p>Made with ❤️ & 3D-Druck Liebe | Stitch & Disney Edition 🌺</p>
+            <button onclick="openAdminModal()" class="text-gray-400 hover:text-sky-400 transition-colors p-2 rounded-lg hover:bg-slate-800/50 flex items-center gap-1.5">
+                <i class="fa-solid fa-gear"></i> <span>Admin-Einstellungen</span>
+            </button>
         </div>
     </footer>
 
-    <!-- MODAL: REWARD / CODE CELEBRATION -->
-    <div id="rewardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 text-center border-2 border-amber-400/40 shadow-2xl transform scale-95 transition-transform duration-300 relative overflow-hidden" id="rewardModalContent">
+    <!-- MODAL 1: PUZZLE / MINIGAME MODAL -->
+    <div id="puzzleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 text-center border-2 border-sky-400/40 shadow-2xl relative overflow-hidden" id="puzzleModalContent">
             
-            <button onclick="closeRewardModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center transition-colors">
+            <button onclick="closePuzzleModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800/60 hover:bg-slate-700 text-gray-300 hover:text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Top Header -->
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-sky-500/20 text-sky-300 text-2xl mb-3 border border-sky-400/30">
+                <i id="puzzleIcon" class="fa-solid fa-puzzle-piece"></i>
+            </div>
+            <div id="puzzleDayTitle" class="text-xs font-bold uppercase tracking-widest text-sky-400 mb-1">Türchen Tag 1</div>
+            <h3 id="puzzleName" class="text-xl sm:text-2xl font-bold text-white mb-4">Minispiel Name</h3>
+
+            <!-- Dynamic Game Container -->
+            <div id="gameContainer" class="bg-slate-950/70 rounded-2xl p-4 border border-sky-900/40 mb-6 text-left relative min-h-[160px] flex flex-col justify-center">
+                <!-- Content injected dynamically by JS depending on game type -->
+            </div>
+
+            <div id="puzzleFeedback" class="text-xs font-semibold mb-4 min-h-[18px]"></div>
+
+            <button id="solveGameBtn" onclick="checkCurrentGameAnswer()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold text-sm shadow-lg shadow-sky-500/20 transition-all">
+                <i class="fa-solid fa-circle-check mr-2"></i> Antwort Überprüfen
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: REWARD GIFT REVEAL MODAL -->
+    <div id="rewardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 text-center border-2 border-sky-400/50 shadow-2xl relative overflow-hidden" id="rewardModalContent">
+            
+            <button onclick="closeRewardModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800/60 hover:bg-slate-700 text-gray-300 hover:text-white flex items-center justify-center transition-colors">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
             <!-- Top Icon Badge -->
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 to-rose-600 shadow-lg shadow-amber-500/30 text-white text-3xl mb-4 border-4 border-black/40 animate-bounce">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-tr from-sky-400 to-blue-600 shadow-lg shadow-sky-500/30 text-white text-3xl mb-4 border-4 border-slate-900 animate-bounce">
                 <i id="modalIcon" class="fa-solid fa-gift"></i>
             </div>
 
-            <!-- Header -->
-            <div id="modalDayNumber" class="text-xs font-bold uppercase tracking-widest text-amber-400 mb-1">Türchen Tag 1</div>
+            <div id="modalDayNumber" class="text-xs font-bold uppercase tracking-widest text-sky-400 mb-1">Rätsel Gelöst! Tag 1</div>
             <h3 id="modalTitle" class="text-2xl sm:text-3xl font-bold text-white mb-3">Gutschein Name</h3>
 
             <!-- Message Box -->
-            <div class="bg-black/40 rounded-2xl p-4 sm:p-5 border border-white/10 mb-6 text-left relative">
-                <i class="fa-solid fa-quote-left text-rose-500/20 text-3xl absolute top-2 left-3"></i>
-                <p id="modalMessage" class="text-sm sm:text-base text-gray-200 leading-relaxed relative z-10 italic pl-4">
-                    Hier steht deine süße, persönliche Nachricht für das Türchen.
+            <div class="bg-slate-950/70 rounded-2xl p-5 border border-sky-900/40 mb-6 text-left relative">
+                <p id="modalMessage" class="text-sm sm:text-base text-sky-100 leading-relaxed italic pl-2">
+                    Hier steht deine süße Nachricht.
                 </p>
             </div>
 
-            <!-- Category Tag -->
-            <div class="mb-6 flex justify-center">
-                <span id="modalCategoryTag" class="px-3 py-1 rounded-full text-xs font-semibold bg-rose-950/60 text-rose-300 border border-rose-800/40">
-                    Aktivität
-                </span>
-            </div>
-
-            <!-- Redemption Action Button & Status -->
+            <!-- Redemption Action Button -->
             <div class="space-y-3">
-                <button id="modalRedeemBtn" onclick="toggleRedeemCurrentDay()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2">
+                <button id="modalRedeemBtn" onclick="toggleRedeemCurrentDay()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-circle-check"></i> <span id="modalRedeemBtnText">Als "Eingelöst" markieren</span>
                 </button>
 
@@ -285,152 +320,122 @@
                     <i class="fa-solid fa-check-double mr-1"></i> Dieser Gutschein wurde bereits als eingelöst markiert!
                 </p>
             </div>
-
-            <p class="text-[11px] text-gray-400 mt-4">
-                Du kannst diese Nachricht jederzeit im "Verlauf"-Tab erneut aufrufen!
-            </p>
         </div>
     </div>
 
-    <!-- MODAL: ADMIN CONTROL PANEL -->
+    <!-- MODAL 3: ADMIN PANEL -->
     <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-lg hidden">
-        <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl p-6 flex flex-col border border-amber-500/30 shadow-2xl">
+        <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl p-6 flex flex-col border border-sky-400/30 shadow-2xl">
             
-            <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+            <div class="flex items-center justify-between pb-4 border-b border-sky-900/40 mb-4">
                 <div>
                     <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-amber-400"></i> Admin-Verwaltung & Türchen-Editor
+                        <i class="fa-solid fa-sliders text-sky-400"></i> Admin-Verwaltung
                     </h3>
-                    <p class="text-xs text-gray-400">Verwalte alle 24 Türchen-Codes, Nachrichten & Freischalt-Status</p>
+                    <p class="text-xs text-sky-200/60">Verwalte alle 24 Codes, Minispiele & Gutscheine</p>
                 </div>
                 <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white p-2">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
 
-            <!-- Admin Authentication Form -->
+            <!-- Admin Authentication -->
             <div id="adminAuthSection" class="py-12 text-center space-y-4 my-auto">
-                <div class="w-16 h-16 mx-auto rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+                <div class="w-16 h-16 mx-auto rounded-full bg-sky-500/10 border border-sky-400/20 flex items-center justify-center text-sky-400">
                     <i class="fa-solid fa-shield-halved text-2xl"></i>
                 </div>
                 <h4 class="text-lg font-semibold text-white">Admin-Zugang</h4>
-                <p class="text-xs text-gray-400 max-w-xs mx-auto">Gib dein Passcode ein, um die Türchen zu bearbeiten.<br><span class="text-amber-400/80 font-mono mt-1 inline-block">(Standard PIN: 1234)</span></p>
+                <p class="text-xs text-gray-400 max-w-xs mx-auto">Standard PIN: <span class="text-sky-300 font-mono">1234</span></p>
                 <div class="flex justify-center gap-2 max-w-xs mx-auto pt-2">
-                    <input type="password" id="adminPassInput" class="bg-black/60 border border-white/20 rounded-xl px-4 py-2 text-center text-white outline-none focus:border-amber-400 w-full" placeholder="PIN eingeben">
-                    <button onclick="checkAdminPass()" class="px-5 py-2 bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-medium rounded-xl text-sm transition-all whitespace-nowrap">
-                        Anmelden
+                    <input type="password" id="adminPassInput" class="bg-slate-950 border border-sky-800 rounded-xl px-4 py-2 text-center text-white outline-none focus:border-sky-400 w-full" placeholder="PIN eingeben">
+                    <button onclick="checkAdminPass()" class="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-white font-medium rounded-xl text-sm transition-all whitespace-nowrap">
+                        Login
                     </button>
                 </div>
                 <p id="adminAuthErr" class="text-xs text-rose-400 hidden font-medium">Falscher Passcode!</p>
             </div>
 
-            <!-- Admin Panel Content (Unlocked) -->
+            <!-- Admin Panel Content -->
             <div id="adminPanelContent" class="hidden flex-col flex-grow overflow-hidden space-y-4">
-                
-                <!-- Quick Controls Bar -->
-                <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-black/40 rounded-2xl border border-white/5">
+                <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-950/60 rounded-2xl border border-sky-900/30">
                     <div class="flex flex-wrap items-center gap-2">
                         <button onclick="saveAdminChanges()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-md">
-                            <i class="fa-solid fa-floppy-disk"></i> Änderungen Speichern
+                            <i class="fa-solid fa-floppy-disk"></i> Speichern
                         </button>
-                        <button onclick="resetAllToDefaults()" class="px-3 py-2 bg-amber-950/60 hover:bg-amber-900/60 border border-amber-800/40 text-amber-300 rounded-xl text-xs font-medium transition-colors">
-                            <i class="fa-solid fa-rotate-left mr-1"></i> Standardwerte Laden
-                        </button>
-                        <button onclick="toggleAllDoorsStatus(true)" class="px-3 py-2 bg-rose-950/60 hover:bg-rose-900/60 border border-rose-800/40 text-rose-300 rounded-xl text-xs font-medium transition-colors">
-                            <i class="fa-solid fa-unlock mr-1"></i> Alle Freischalten
-                        </button>
-                        <button onclick="toggleAllDoorsStatus(false)" class="px-3 py-2 bg-black/60 hover:bg-white/10 border border-white/10 text-gray-300 rounded-xl text-xs font-medium transition-colors">
-                            <i class="fa-solid fa-lock mr-1"></i> Alle Sperren
+                        <button onclick="resetAllToDefaults()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-sky-200 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Defaults
                         </button>
                     </div>
                     <span id="adminFeedback" class="text-xs font-medium text-emerald-400 min-h-[16px]"></span>
                 </div>
 
-                <!-- Scrollable Doors Editor List -->
                 <div class="flex-grow overflow-y-auto pr-2 space-y-3">
                     <div id="adminDaysList" class="space-y-3">
-                        <!-- Dynamic Door Editor Cards -->
+                        <!-- Admin Row Items -->
                     </div>
                 </div>
 
-                <div class="pt-3 border-t border-white/10 flex justify-between items-center">
-                    <span class="text-xs text-gray-500">PIN ändern? Im Code Variable <code class="text-amber-400">ADMIN_PIN</code> anpassen.</span>
-                    <button onclick="closeAdminModal()" class="px-6 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-xl">
+                <div class="pt-3 border-t border-sky-900/40 flex justify-between items-center">
+                    <span class="text-xs text-gray-500">PIN: <code class="text-sky-400">1234</code></span>
+                    <button onclick="closeAdminModal()" class="px-6 py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold rounded-xl">
                         Schließen
                     </button>
                 </div>
-
             </div>
 
         </div>
     </div>
 
-    <!-- JAVASCRIPT APP LOGIC -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Default Admin Passcode
         const ADMIN_PIN = "1234";
 
-        // Category Icon Mapping
-        const CATEGORIES = {
-            "Aktivität": "fa-compass",
-            "Verwöhnen": "fa-spa",
-            "Food": "fa-utensils",
-            "Joker": "fa-crown",
-            "Romantik": "fa-heart",
-            "Unterhaltung": "fa-gamepad"
-        };
-
-        // Default Calendar Data (24 Days)
+        // 24 Days Default Data with Mini-Games
         const DEFAULT_CALENDAR_DATA = [
-            { day: 1, code: "12345", title: "Film-Aussuch-Recht", category: "Unterhaltung", message: "Heute darfst du komplett alleine entscheiden, welchen Film oder welche Serie wir schauen. Kein Meckern von meiner Seite! 🎬🍿", unlocked: false, redeemed: false },
-            { day: 2, code: "23456", title: "Rückenmassage (20 Min)", category: "Verwöhnen", message: "Mach es dir gemütlich! Du hast dir eine ausgiebige 20-minütige Entspannungsmassage mit warmem Öl verdient. 💆‍♀️✨", unlocked: false, redeemed: false },
-            { day: 3, code: "34567", title: "Lieblingsessen kochen", category: "Food", message: "Sag mir einfach, worauf du heute Heißhunger hast. Ich koche dir dein absolutes Lieblingsgericht! 🍝❤️", unlocked: false, redeemed: false },
-            { day: 4, code: "45678", title: "Kaffee ans Bett", category: "Verwöhnen", message: "Bleib gemütlich im Bett eingekuschelt! Ich bringe dir deinen frischen Lieblingskaffee oder Kakao ans Bett. ☕🥐", unlocked: false, redeemed: false },
-            { day: 5, code: "56789", title: "Kiosksnack-Gutschein", category: "Food", message: "Bei unserem nächsten Spaziergang oder Einkauf darfst du dir eine Nascherei deiner Wahl aussuchen – geht auf mich! 🍫😋", unlocked: false, redeemed: false },
-            { day: 6, code: "67890", title: "Nikolaus Überraschungs-Date", category: "Aktivität", message: "Alles Liebe zum Nikolaus! Ich habe ein kleines Überraschungs-Date für uns geplant. Lass dich überraschen! 🎅✨", unlocked: false, redeemed: false },
-            { day: 7, code: "11111", title: "Couch-Gaming-Abend", category: "Unterhaltung", message: "Ein gemeinsamer gemütlicher Gaming-Abend mit Snacks auf der Couch. Wir spielen dein Lieblings-Game! 🎮🍕", unlocked: false, redeemed: false },
-            { day: 8, code: "22222", title: "Kuschel-Garantie", category: "Romantik", message: "Sofortige Einlösung für unbegrenzte, warme Kuschelzeit auf dem Sofa. Alles andere muss warten! 🛋️🧸", unlocked: false, redeemed: false },
-            { day: 9, code: "33333", title: "Nachtspaziergang & Glühwein", category: "Aktivität", message: "Wir ziehen uns dick an und machen einen Spaziergang mit heißem Kakao oder Glühwein to-go! 🌙☕", unlocked: false, redeemed: false },
-            { day: 10, code: "44444", title: "Chauffeur-Dienst", category: "Verwöhnen", message: "Egal ob Regen oder Kälte: Ich fahre dich wohin du möchtest und hole dich pünktlich wieder ab! 🚗💨", unlocked: false, redeemed: false },
-            { day: 11, code: "55555", title: "Plätzchen-Back-Party", category: "Food", message: "Gemeinsame Backsession in der Küche mit Weihnachtsmusik, viel Teig naschen und Mehl-Chaos! 🍪🎄", unlocked: false, redeemed: false },
-            { day: 12, code: "66666", title: "Fußmassage nach langem Tag", category: "Verwöhnen", message: "Nach einem langen Tag: Füße hochlegen! Ich kümmere mich um eine wohltuende Fußmassage. 🦶💆‍♀️", unlocked: false, redeemed: false },
-            { day: 13, code: "77777", title: "Der 'Du hast Recht' Joker", category: "Joker", message: "Setze diesen Joker in einer Diskussion ein und ich muss dir sofort und ohne Diskussion zustimmen! 🤐🏆", unlocked: false, redeemed: false },
-            { day: 14, code: "88888", title: "Eis & Dessert Bringdienst", category: "Food", message: "Lust auf was Süßes? Ich flitze spontan los oder zaubere dir dein Lieblings-Dessert! 🍦🍨", unlocked: false, redeemed: false },
-            { day: 15, code: "99999", title: "Spontaner Tagesausflug", category: "Aktivität", message: "Einlösbar am Wochenende: Wir steigen ins Auto und fahren an einen Ort, an dem wir noch nie zusammen waren! 🗺️✨", unlocked: false, redeemed: false },
-            { day: 16, code: "12121", title: "Zwei Stunden Me-Time", category: "Verwöhnen", message: "Ich nehme dir alle Haushaltsaufgaben ab und du kannst dich 2 Stunden lang komplett entspannen! 🛁📖", unlocked: false, redeemed: false },
-            { day: 17, code: "23232", title: "Wellness-Abend Zuhause", category: "Verwöhnen", message: "Ich verwandle unser Zuhause in eine Spa-Oase mit Kerzen, Entspannungsmusik und Gesichtsmasken! 🕯️🧴", unlocked: false, redeemed: false },
-            { day: 18, code: "34343", title: "Frühstück im Bett Deluxe", category: "Food", message: "Sonntags-Frühstück komplett ans Bett serviert mit frischen Brötchen, Saft und Allem drum und dran! 🥐🍓", unlocked: false, redeemed: false },
-            { day: 19, code: "45454", title: "Foto-Shooting Moment", category: "Romantik", message: "Wir machen heute 3 schöne, neue Pärchenfotos zusammen für unsere Erinnerungssammlung! 📸❤️", unlocked: false, redeemed: false },
-            { day: 20, code: "56565", title: "Wunsch-Playlist Abend", category: "Unterhaltung", message: "Den ganzen Abend läuft nur deine Musik – egal welches Genre oder wie oft dein Lieblingssong läuft! 🎶🎧", unlocked: false, redeemed: false },
-            { day: 21, code: "67676", title: "Handgeschriebener Brief", category: "Romantik", message: "Ich habe dir einen persönlichen, handgeschriebenen Liebesbrief verfasst. Schau mal in deine Tasche! ✉️💖", unlocked: false, redeemed: false },
-            { day: 22, code: "78787", title: "Kino-Home-Snack-Bar", category: "Food", message: "Ich bereite ein riesiges Snack-Tablett mit Popcorn, Nachos und Süßigkeiten für unseren Filmabend vor! 🍿🥤", unlocked: false, redeemed: false },
-            { day: 23, code: "89898", title: "Vorfreude-Talk bei Kerzen", category: "Romantik", message: "Wir machen es uns bei Kerzenschein gemütlich und sprechen über unsere schönsten Momente des Jahres! 🕯️✨", unlocked: false, redeemed: false },
-            { day: 24, code: "24124", title: "Der Master-Wunsch-Joker", category: "Joker", message: "Frohe Weihnachten! Dieser Gutschein erfüllt dir einen ganz besonderen Wunsch deiner Wahl. 🎁🎄❤️", unlocked: false, redeemed: false }
+            { day: 1, code: "62601", gameType: "quiz", gameTitle: "Stitch-Wissen", prompt: "Wie lautet die Experiment-Nummer von Stitch?", answer: "626", title: "Film-Aussuch-Recht 🎬", category: "Unterhaltung", message: "Du hast das erste Rätsel gelöst! Heute darfst du komplett alleine entscheiden, welchen Disney-Film wir schauen! ❤️", unlocked: false, redeemed: false },
+            { day: 2, code: "62602", gameType: "unscramble", gameTitle: "Buchstaben-Zauber", prompt: "Ordne die Buchstaben richtig an!", answer: "OHANA", title: "Rückenmassage (20 Min) 💆‍♀️", category: "Verwöhnen", message: "Ohana heißt Familie! Du hast dir eine 20-minütige entspannende Rückenmassage verdient.", unlocked: false, redeemed: false },
+            { day: 3, code: "62603", gameType: "memory", gameTitle: "Disney-Paare Finden", prompt: "Finde alle 3 zusammengehörigen Disney-Paare!", answer: "MEMORY_COMPLETE", title: "Lieblingsessen Kochen 🍝", category: "Food", message: "Super Gemacht! Ich koche dir heute dein absolutes Lieblingsgericht.", unlocked: false, redeemed: false },
+            { day: 4, code: "62604", gameType: "catch", gameTitle: "Stitch-Fangspiel", prompt: "Klicke schnell auf 4 schwebende Stitch-Sterne!", answer: "CATCH_4", title: "Kaffee ans Bett ☕", category: "Verwöhnen", message: "Schnelle Reflexe! Morgen darfst du im Bett liegen bleiben und kriegst frischen Kaffee serviert.", unlocked: false, redeemed: false },
+            { day: 5, code: "62605", gameType: "sequence", gameTitle: "Muster-Merker", prompt: "Merke dir die Reihenfolge der Symbole und wiederhole sie!", sequence: ["🌺","🧪","👑"], answer: "SEQUENCE_MATCH", title: "Kiosksnack Gutschein 🍫", category: "Food", message: "Klasse Gedächtnis! Beim nächsten Einkauf geht eine Nascherei komplett auf mich.", unlocked: false, redeemed: false },
+            { day: 6, code: "62606", gameType: "quiz", gameTitle: "Nikolaus-Rätsel 🎅", prompt: "Woher kommt Lilo & Stitch? (Inselgruppe)", answer: "HAWAII", title: "Nikolaus Überraschungs-Date 🌺", category: "Aktivität", message: "Aloha! Alles Liebe zum Nikolaus! Ich habe ein kleines Überraschungs-Date für uns vorbereitet.", unlocked: false, redeemed: false },
+            { day: 7, code: "62607", gameType: "unscramble", gameTitle: "Wort-Salat", prompt: "Bringe die Buchstaben in die richtige Reihenfolge:", answer: "STITCH", title: "Couch-Gaming-Abend 🎮", category: "Unterhaltung", message: "Perfekt gelöst! Ein gemütlicher Gaming-Abend auf der Couch gehört heute dir.", unlocked: false, redeemed: false },
+            { day: 8, code: "62608", gameType: "memory", gameTitle: "Disney Match", prompt: "Finde die übereinstimmenden Symbole!", answer: "MEMORY_COMPLETE", title: "Kuschel-Garantie 🧸", category: "Romantik", message: "Sofort einlösbar für unbegrenzte Kuschelzeit auf der Couch!", unlocked: false, redeemed: false },
+            { day: 9, code: "62609", gameType: "quiz", gameTitle: "König der Löwen Quiz", prompt: "Wie heißt Simba's bester Erdmännchen-Freund?", answer: "TIMON", title: "Nachtspaziergang & Kakao 🌙", category: "Aktivität", message: "Hakuna Matata! Wir machen einen Spaziergang mit heißem Kakao to-go.", unlocked: false, redeemed: false },
+            { day: 10, code: "62610", gameType: "catch", gameTitle: "Kokosnuss-Jagd", prompt: "Sammle 5 Kokosnüsse auf dem Feld ein!", answer: "CATCH_5", title: "Chauffeur-Dienst 🚗", category: "Verwöhnen", message: "Super gefangen! Egal wie kalt es ist: Ich fahre dich heute wo du möchtest hin.", unlocked: false, redeemed: false },
+            { day: 11, code: "62611", gameType: "unscramble", gameTitle: "Zauberwort", prompt: "Entschlüssele das magische Wort:", answer: "DISNEY", title: "Plätzchen-Back-Party 🍪", category: "Food", message: "Magisch! Wir backen zusammen Plätzchen mit Weihnachtsmusik und Naschen.", unlocked: false, redeemed: false },
+            { day: 12, code: "62612", gameType: "sequence", gameTitle: "Farb-Muster", prompt: "Wiederhole das 4er-Muster!", sequence: ["🟦","🟨","🟥","🟩"], answer: "SEQUENCE_MATCH", title: "Fußmassage Deluxe 🦶", category: "Verwöhnen", message: "Genau richtig! Nach einem langen Tag hast du dir eine entspannende Fußmassage verdient.", unlocked: false, redeemed: false },
+            { day: 13, code: "62613", gameType: "quiz", gameTitle: "Disney-Prinzen", prompt: "Wie heißt der Prinz von Arielle der Meerjungfrau?", answer: "ERIC", title: "Der 'Du hast Recht' Joker 🏆", category: "Joker", message: "Setze diesen Joker in einer Diskussion ein und ich muss dir sofort zustimmen!", unlocked: false, redeemed: false },
+            { day: 14, code: "62614", gameType: "memory", gameTitle: "Memory-Meister", prompt: "Deck alle passenden Karten auf!", answer: "MEMORY_COMPLETE", title: "Dessert Bringdienst 🍦", category: "Food", message: "Süßer Sieg! Ich flitze los und bringe dir dein Lieblings-Eis oder Dessert.", unlocked: false, redeemed: false },
+            { day: 15, code: "62615", gameType: "catch", gameTitle: "Sternen-Fänger", prompt: "Fange 5 magische Sterne!", answer: "CATCH_5", title: "Spontaner Tagesausflug 🗺️", category: "Aktivität", message: "Sternenregen! Wir machen am Wochenende einen Ausflug an einen neuen Ort.", unlocked: false, redeemed: false },
+            { day: 16, code: "62616", gameType: "unscramble", gameTitle: "Stitch-Freundin", prompt: "Wie heißt Stitchs rosa Freundin?", answer: "ANGEL", title: "2 Stunden Me-Time 🛁", category: "Verwöhnen", message: "Richtig! Ich nehme dir alle Aufgaben ab und du hast 2 Stunden absolute Entspannung.", unlocked: false, redeemed: false },
+            { day: 17, code: "62617", gameType: "quiz", gameTitle: "Eiskönigin Quiz", prompt: "Wie heißt der Schneemann aus Die Eiskönigin?", answer: "OLAF", title: "Spa- & Wellness-Abend 🕯️", category: "Verwöhnen", message: "Manche Menschen sind es wert, für sie zu schmelzen! Gemütlicher Wellness-Abend mit Kerzen.", unlocked: false, redeemed: false },
+            { day: 18, code: "62618", gameType: "sequence", gameTitle: "Profi-Muster", prompt: "Wiederhole das 5er-Muster!", sequence: ["🌺","🏄","🧪","👑","🌺"], answer: "SEQUENCE_MATCH", title: "Frühstück im Bett 🥐", category: "Food", message: "Perfektes Gedächtnis! Sonntags-Frühstück komplett ans Bett serviert.", unlocked: false, redeemed: false },
+            { day: 19, code: "62619", gameType: "unscramble", gameTitle: "Hawaiianisches Wort", prompt: "Bringe die Buchstaben in Ordnung:", answer: "ALOHA", title: "Foto-Shooting Moment 📸", category: "Romantik", message: "Aloha! Wir machen 3 schöne neue Pärchenfotos für unsere Erinnerungen.", unlocked: false, redeemed: false },
+            { day: 20, code: "62620", gameType: "memory", gameTitle: "Disney Paar-Suche", prompt: "Finde alle 4 Paare!", answer: "MEMORY_COMPLETE", title: "Wunsch-Playlist Abend 🎶", category: "Unterhaltung", message: "Den ganzen Abend läuft nur deine Lieblingsmusik!", unlocked: false, redeemed: false },
+            { day: 21, code: "62621", gameType: "quiz", gameTitle: "Aladdin Quiz", prompt: "Welche Farbe hat der Dschinn aus der Wunderlampe?", answer: "BLAU", title: "Handgeschriebener Brief ✉️", category: "Romantik", message: "Genau wie Stitch – Blau! Ich habe dir einen persönlichen Liebesbrief geschrieben.", unlocked: false, redeemed: false },
+            { day: 22, code: "62622", gameType: "catch", gameTitle: "Herzen-Jagd", prompt: "Klicke 6 schwebende Herzen an!", answer: "CATCH_6", title: "Kino-Home-Snack-Bar 🍿", category: "Food", message: "Voller Liebe! Ich bereite ein großes Snack-Tablett für unseren Heim-Kinoabend vor.", unlocked: false, redeemed: false },
+            { day: 23, code: "62623", gameType: "sequence", gameTitle: "Endgegner Muster", prompt: "Merke dir dieses 5er-Muster!", sequence: ["⭐","🌺","⭐","🧪","⭐"], answer: "SEQUENCE_MATCH", title: "Vorfreude-Talk bei Kerzen 🕯️", category: "Romantik", message: "Fast geschafft! Gemütlicher Abend bei Kerzenlicht und Vorfreude auf morgen.", unlocked: false, redeemed: false },
+            { day: 24, code: "62624", gameType: "unscramble", gameTitle: "Das Weihnachts-Rätsel 🎄", prompt: "Löse das letzte Zauberwort:", answer: "GESCHENK", title: "Der Master-Wunsch-Joker 🎁", category: "Joker", message: "Frohe Weihnachten! Dieser Gutschein erfüllt dir einen ganz besonderen Wunsch deiner Wahl. ❤️", unlocked: false, redeemed: false }
         ];
 
-        // State Variables
         let calendarData = [];
         let activeDayForModal = null;
+        let activeGameData = {};
         let isAdminLoggedIn = false;
 
-        // Initialize App
+        // Init App
         window.addEventListener('DOMContentLoaded', () => {
             loadCalendarData();
             renderCalendarGrid();
             renderHistoryGrid();
             updateStats();
-            initSnowCanvas();
+            initStarCanvas();
         });
 
-        // Load or initialize data from localStorage
         function loadCalendarData() {
-            const saved = localStorage.getItem('adventskalender_data');
+            const saved = localStorage.getItem('stitch_adventskalender_data');
             if (saved) {
-                try {
-                    calendarData = JSON.parse(saved);
-                } catch (e) {
-                    calendarData = [...DEFAULT_CALENDAR_DATA];
-                }
+                try { calendarData = JSON.parse(saved); } catch(e) { calendarData = [...DEFAULT_CALENDAR_DATA]; }
             } else {
                 calendarData = [...DEFAULT_CALENDAR_DATA];
                 saveCalendarData();
@@ -438,10 +443,9 @@
         }
 
         function saveCalendarData() {
-            localStorage.setItem('adventskalender_data', JSON.stringify(calendarData));
+            localStorage.setItem('stitch_adventskalender_data', JSON.stringify(calendarData));
         }
 
-        // Render Main Grid
         function renderCalendarGrid() {
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
@@ -450,34 +454,32 @@
                 const card = document.createElement('div');
                 card.className = `glass-card rounded-2xl p-4 flex flex-col justify-between items-center text-center relative overflow-hidden transition-all duration-300 border ${
                     item.unlocked 
-                        ? 'border-amber-400/50 bg-amber-950/20 shadow-lg shadow-amber-500/10 hover:border-amber-400' 
+                        ? 'border-sky-400/50 bg-sky-950/20 shadow-lg shadow-sky-500/10 hover:border-sky-400' 
                         : 'border-white/5 opacity-80 hover:opacity-100 hover:border-white/20'
                 }`;
 
-                const categoryIcon = CATEGORIES[item.category] || 'fa-gift';
-
                 if (item.unlocked) {
                     card.innerHTML = `
-                        <div class="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded-full ${item.redeemed ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/40' : 'bg-amber-950 text-amber-300 border border-amber-800/40'} font-semibold">
+                        <div class="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded-full ${item.redeemed ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/40' : 'bg-sky-950 text-sky-300 border border-sky-800/40'} font-semibold">
                             ${item.redeemed ? 'Eingelöst' : 'Offen'}
                         </div>
-                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center my-2 text-lg font-bold">
+                        <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center my-2 text-lg font-bold border border-sky-400/30">
                             ${item.day}
                         </div>
                         <h4 class="text-xs sm:text-sm font-semibold text-white line-clamp-1 mb-1">${item.title}</h4>
-                        <p class="text-[11px] text-gray-400 line-clamp-2 mb-3 px-1">${item.message}</p>
-                        <button onclick="openRewardModal(${item.day}, true)" class="w-full py-1.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium border border-amber-500/30 transition-colors">
+                        <p class="text-[11px] text-sky-200/60 line-clamp-2 mb-3 px-1">${item.message}</p>
+                        <button onclick="openRewardModalDirect(${item.day})" class="w-full py-1.5 px-3 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-xs font-medium border border-sky-400/30 transition-colors">
                             Ansehen <i class="fa-solid fa-arrow-right text-[10px] ml-1"></i>
                         </button>
                     `;
                 } else {
                     card.innerHTML = `
-                        <div class="w-10 h-10 rounded-xl bg-white/5 text-gray-500 flex items-center justify-center my-3 text-base font-bold">
+                        <div class="w-10 h-10 rounded-xl bg-slate-800/60 text-slate-500 flex items-center justify-center my-3 text-base font-bold">
                             <i class="fa-solid fa-lock"></i>
                         </div>
                         <div class="text-sm font-bold text-gray-300 mb-1">Türchen ${item.day}</div>
-                        <p class="text-[11px] text-gray-500 mb-3 blur-[2px] select-none">Code erforderlich</p>
-                        <div class="w-full py-1.5 px-2 rounded-xl bg-black/40 text-gray-500 text-[11px] border border-white/5 font-mono">
+                        <p class="text-[11px] text-slate-500 mb-3 blur-[2px] select-none">Code erforderlich</p>
+                        <div class="w-full py-1.5 px-2 rounded-xl bg-slate-950 text-slate-600 text-[11px] border border-white/5 font-mono">
                             *****
                         </div>
                     `;
@@ -487,7 +489,6 @@
             });
         }
 
-        // Render History Grid
         function renderHistoryGrid() {
             const grid = document.getElementById('historyGrid');
             const emptyMsg = document.getElementById('emptyHistoryMsg');
@@ -506,33 +507,31 @@
 
             unlockedItems.sort((a,b) => a.day - b.day).forEach(item => {
                 const card = document.createElement('div');
-                card.onclick = () => openRewardModal(item.day, true);
-                card.className = "glass-card rounded-2xl p-5 border border-amber-500/20 hover:border-amber-400/60 transition-all duration-300 cursor-pointer group relative overflow-hidden";
+                card.onclick = () => openRewardModalDirect(item.day);
+                card.className = "glass-card rounded-2xl p-5 border border-sky-500/20 hover:border-sky-400/60 transition-all duration-300 cursor-pointer group relative overflow-hidden";
                 
-                const categoryIcon = CATEGORIES[item.category] || 'fa-gift';
-
                 card.innerHTML = `
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500/20 to-rose-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
-                                <i class="fa-solid ${categoryIcon}"></i>
+                            <div class="w-10 h-10 rounded-2xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-gift"></i>
                             </div>
                             <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Tag ${item.day}</span>
-                                <h4 class="text-base font-bold text-white group-hover:text-amber-300 transition-colors">${item.title}</h4>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">Tag ${item.day}</span>
+                                <h4 class="text-base font-bold text-white group-hover:text-sky-300 transition-colors">${item.title}</h4>
                             </div>
                         </div>
-                        <span class="text-[10px] px-2.5 py-1 rounded-full font-semibold ${item.redeemed ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/40' : 'bg-amber-950 text-amber-300 border border-amber-800/40'}">
+                        <span class="text-[10px] px-2.5 py-1 rounded-full font-semibold ${item.redeemed ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/40' : 'bg-sky-950 text-sky-300 border border-sky-800/40'}">
                             ${item.redeemed ? 'Eingelöst' : 'Bereit'}
                         </span>
                     </div>
-                    <p class="text-xs text-gray-300 italic line-clamp-2 mb-3 bg-black/30 p-2.5 rounded-xl border border-white/5">
+                    <p class="text-xs text-sky-100/80 italic line-clamp-2 mb-3 bg-slate-950/50 p-2.5 rounded-xl border border-sky-900/30">
                         "${item.message}"
                     </p>
                     <div class="flex items-center justify-between text-[11px] text-gray-400 pt-2 border-t border-white/5">
-                        <span class="text-rose-300/80"><i class="fa-solid fa-tag mr-1"></i>${item.category}</span>
-                        <span class="text-amber-400 font-medium group-hover:translate-x-1 transition-transform">
-                            Klicken für Animation <i class="fa-solid fa-arrow-right ml-1"></i>
+                        <span class="text-sky-400/80"><i class="fa-solid fa-gamepad mr-1"></i>Minispiel gelöst</span>
+                        <span class="text-sky-300 font-medium group-hover:translate-x-1 transition-transform">
+                            Ansehen <i class="fa-solid fa-arrow-right ml-1"></i>
                         </span>
                     </div>
                 `;
@@ -541,11 +540,9 @@
             });
         }
 
-        // Code Submission Handler
         function handleCodeSubmit(e) {
             e.preventDefault();
             const input = document.getElementById('codeInput');
-            const feedback = document.getElementById('codeFeedback');
             const code = input.value.trim();
 
             if (!code || code.length !== 5) {
@@ -556,19 +553,13 @@
             const match = calendarData.find(item => item.code.toLowerCase() === code.toLowerCase());
 
             if (match) {
-                if (!match.unlocked) {
-                    match.unlocked = true;
-                    saveCalendarData();
-                    renderCalendarGrid();
-                    renderHistoryGrid();
-                    updateStats();
-                }
-                
                 input.value = '';
-                showFeedback(`✨ Türchen Tag ${match.day} freigeschaltet!`, "text-emerald-400");
-                openRewardModal(match.day, true);
+                showFeedback(`✨ Code richtig! Starte Minispiel für Tag ${match.day}...`, "text-sky-300");
+                setTimeout(() => {
+                    openPuzzleModal(match.day);
+                }, 500);
             } else {
-                showFeedback("❌ Ungültiger Code. Überprüfe deinen Code aus dem Türchen!", "text-rose-400");
+                showFeedback("❌ Ungültiger Code. Überprüfe deinen 3D-Druck Kalender!", "text-rose-400");
             }
         }
 
@@ -576,13 +567,269 @@
             const feedback = document.getElementById('codeFeedback');
             feedback.textContent = msg;
             feedback.className = `mt-4 text-xs sm:text-sm font-medium transition-all ${colorClass}`;
-            setTimeout(() => {
-                feedback.textContent = '';
-            }, 4000);
+            setTimeout(() => { feedback.textContent = ''; }, 4000);
         }
 
-        // Open Reward Modal & Trigger Particle Celebration
-        function openRewardModal(day, triggerParticles = true) {
+        // --- PUZZLE / MINIGAME CONTROLLER ---
+        function openPuzzleModal(day) {
+            const item = calendarData.find(d => d.day === day);
+            if (!item) return;
+
+            activeDayForModal = day;
+            document.getElementById('puzzleDayTitle').textContent = `Türchen Tag ${item.day}`;
+            document.getElementById('puzzleName').textContent = item.gameTitle || "Disney Minispiel";
+            document.getElementById('puzzleFeedback').textContent = "";
+
+            setupGameUI(item);
+
+            const modal = document.getElementById('puzzleModal');
+            const modalContent = document.getElementById('puzzleModalContent');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function setupGameUI(item) {
+            const container = document.getElementById('gameContainer');
+            container.innerHTML = '';
+            activeGameData = { solved: false, type: item.gameType };
+
+            if (item.gameType === 'quiz') {
+                container.innerHTML = `
+                    <p class="text-sm text-sky-200 font-medium mb-3">${item.prompt}</p>
+                    <input type="text" id="quizInput" class="w-full bg-slate-900 border border-sky-800 rounded-xl px-4 py-2 text-white outline-none focus:border-sky-400 text-sm uppercase" placeholder="Deine Antwort eingeben...">
+                `;
+            } else if (item.gameType === 'unscramble') {
+                const scrambled = item.answer.split('').sort(() => 0.5 - Math.random()).join('');
+                activeGameData.userWord = [];
+                activeGameData.target = item.answer;
+
+                container.innerHTML = `
+                    <p class="text-xs text-sky-200 mb-2">${item.prompt}</p>
+                    <div id="wordDisplay" class="h-10 bg-slate-900 border border-sky-800 rounded-xl flex items-center justify-center gap-1 text-lg font-bold text-sky-300 font-mono tracking-widest mb-4">
+                        _ _ _ _
+                    </div>
+                    <div id="letterButtons" class="flex flex-wrap justify-center gap-2">
+                        ${scrambled.split('').map((char, idx) => `
+                            <button onclick="selectLetter('${char}', this)" class="w-10 h-10 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-md transition-all">
+                                ${char}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <button onclick="resetUnscramble()" class="mt-3 text-[11px] text-sky-400 hover:underline block mx-auto">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Zurücksetzen
+                    </button>
+                `;
+                updateWordDisplay();
+            } else if (item.gameType === 'catch') {
+                const targetCount = parseInt(item.answer.replace('CATCH_', '')) || 4;
+                activeGameData.caught = 0;
+                activeGameData.target = targetCount;
+
+                container.innerHTML = `
+                    <p class="text-xs text-sky-200 mb-2">${item.prompt} (${activeGameData.caught}/${activeGameData.target})</p>
+                    <div id="catchArea" class="h-40 bg-slate-900/90 border border-sky-800/60 rounded-xl relative overflow-hidden flex items-center justify-center">
+                        <span class="text-xs text-slate-600">Sterne erscheinen...</span>
+                    </div>
+                `;
+                spawnCatchItems();
+            } else if (item.gameType === 'memory') {
+                const icons = ['🌺', '🧪', '👑', '👽', '🏄', '⭐'].slice(0, 3);
+                const deck = [...icons, ...icons].sort(() => 0.5 - Math.random());
+                activeGameData.flipped = [];
+                activeGameData.matched = 0;
+                activeGameData.totalPairs = icons.length;
+
+                container.innerHTML = `
+                    <p class="text-xs text-sky-200 mb-3">${item.prompt}</p>
+                    <div class="grid grid-cols-3 gap-2 max-w-xs mx-auto">
+                        ${deck.map((icon, idx) => `
+                            <button onclick="flipMemoryCard(${idx}, '${icon}', this)" class="h-14 rounded-xl bg-slate-900 border border-sky-800 text-2xl flex items-center justify-center transition-all hover:border-sky-400 memory-btn">
+                                <span class="hidden icon-span">${icon}</span>
+                                <span class="cover-span text-sky-400 text-sm">🌺</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (item.gameType === 'sequence') {
+                const seq = item.sequence || ["🌺","🧪","👑"];
+                activeGameData.seq = seq;
+                activeGameData.userSeq = [];
+
+                container.innerHTML = `
+                    <p class="text-xs text-sky-200 mb-2">${item.prompt}</p>
+                    <div id="seqTargetDisplay" class="flex justify-center gap-2 mb-4 p-3 bg-slate-900 rounded-xl border border-sky-800/60 text-2xl">
+                        ${seq.map(s => `<span>${s}</span>`).join(' ')}
+                    </div>
+                    <div class="flex justify-center gap-2">
+                        ${[...new Set(seq)].map(s => `
+                            <button onclick="pressSequenceSymbol('${s}')" class="w-12 h-12 rounded-xl bg-sky-600/30 hover:bg-sky-500/40 border border-sky-400/30 text-2xl flex items-center justify-center transition-all">
+                                ${s}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        // Unscramble Helper
+        function selectLetter(char, btn) {
+            btn.disabled = true;
+            btn.classList.add('opacity-30');
+            activeGameData.userWord.push(char);
+            updateWordDisplay();
+        }
+
+        function updateWordDisplay() {
+            const display = document.getElementById('wordDisplay');
+            if (display) {
+                display.textContent = activeGameData.userWord.join('') || '_ _ _ _';
+            }
+        }
+
+        function resetUnscramble() {
+            const item = calendarData.find(d => d.day === activeDayForModal);
+            if (item) setupGameUI(item);
+        }
+
+        // Catch Game Helper
+        function spawnCatchItems() {
+            const area = document.getElementById('catchArea');
+            if (!area) return;
+            area.innerHTML = '';
+
+            const btn = document.createElement('button');
+            btn.className = "absolute text-2xl animate-bounce transition-all transform hover:scale-125 p-2";
+            btn.textContent = "⭐";
+            
+            const x = Math.random() * 80 + 10;
+            const y = Math.random() * 70 + 15;
+            btn.style.left = `${x}%`;
+            btn.style.top = `${y}%`;
+
+            btn.onclick = () => {
+                activeGameData.caught++;
+                if (activeGameData.caught >= activeGameData.target) {
+                    activeGameData.solved = true;
+                    document.getElementById('puzzleFeedback').textContent = "🎉 Alle Sterne gefangen!";
+                    document.getElementById('puzzleFeedback').className = "text-xs font-semibold mb-4 text-emerald-400";
+                    area.innerHTML = `<span class="text-sm text-emerald-400 font-bold">Geschafft!</span>`;
+                } else {
+                    spawnCatchItems();
+                }
+            };
+
+            area.appendChild(btn);
+        }
+
+        // Memory Helper
+        function flipMemoryCard(idx, icon, btn) {
+            if (btn.classList.contains('matched') || activeGameData.flipped.length >= 2) return;
+
+            btn.querySelector('.cover-span').classList.add('hidden');
+            btn.querySelector('.icon-span').classList.remove('hidden');
+            btn.classList.add('bg-sky-950', 'border-sky-400');
+
+            activeGameData.flipped.push({ idx, icon, btn });
+
+            if (activeGameData.flipped.length === 2) {
+                const [first, second] = activeGameData.flipped;
+                if (first.icon === second.icon) {
+                    first.btn.classList.add('matched');
+                    second.btn.classList.add('matched');
+                    activeGameData.matched++;
+                    activeGameData.flipped = [];
+
+                    if (activeGameData.matched >= activeGameData.totalPairs) {
+                        activeGameData.solved = true;
+                        document.getElementById('puzzleFeedback').textContent = "🎉 Memory gelöst!";
+                        document.getElementById('puzzleFeedback').className = "text-xs font-semibold mb-4 text-emerald-400";
+                    }
+                } else {
+                    setTimeout(() => {
+                        first.btn.querySelector('.cover-span').classList.remove('hidden');
+                        first.btn.querySelector('.icon-span').classList.add('hidden');
+                        second.btn.querySelector('.cover-span').classList.remove('hidden');
+                        second.btn.querySelector('.icon-span').classList.add('hidden');
+                        first.btn.classList.remove('bg-sky-950', 'border-sky-400');
+                        second.btn.classList.remove('bg-sky-950', 'border-sky-400');
+                        activeGameData.flipped = [];
+                    }, 800);
+                }
+            }
+        }
+
+        // Sequence Helper
+        function pressSequenceSymbol(sym) {
+            activeGameData.userSeq.push(sym);
+            const idx = activeGameData.userSeq.length - 1;
+
+            if (activeGameData.userSeq[idx] !== activeGameData.seq[idx]) {
+                document.getElementById('puzzleFeedback').textContent = "❌ Falsche Reihenfolge! Versuche es nochmal.";
+                document.getElementById('puzzleFeedback').className = "text-xs font-semibold mb-4 text-rose-400";
+                activeGameData.userSeq = [];
+                return;
+            }
+
+            if (activeGameData.userSeq.length === activeGameData.seq.length) {
+                activeGameData.solved = true;
+                document.getElementById('puzzleFeedback').textContent = "🎉 Muster perfekt nachgemacht!";
+                document.getElementById('puzzleFeedback').className = "text-xs font-semibold mb-4 text-emerald-400";
+            }
+        }
+
+        // Check overall puzzle submission
+        function checkCurrentGameAnswer() {
+            const item = calendarData.find(d => d.day === activeDayForModal);
+            if (!item) return;
+
+            let isCorrect = false;
+
+            if (item.gameType === 'quiz') {
+                const val = document.getElementById('quizInput')?.value.trim().toUpperCase();
+                isCorrect = (val === item.answer.trim().toUpperCase());
+            } else if (item.gameType === 'unscramble') {
+                isCorrect = (activeGameData.userWord.join('').toUpperCase() === item.answer.toUpperCase());
+            } else if (activeGameData.solved) {
+                isCorrect = true;
+            }
+
+            if (isCorrect) {
+                item.unlocked = true;
+                saveCalendarData();
+                renderCalendarGrid();
+                renderHistoryGrid();
+                updateStats();
+
+                closePuzzleModal();
+                setTimeout(() => {
+                    openRewardModalDirect(item.day, true);
+                }, 300);
+            } else {
+                document.getElementById('puzzleFeedback').textContent = "❌ Noch nicht richtig! Versuche es gleich nochmal.";
+                document.getElementById('puzzleFeedback').className = "text-xs font-semibold mb-4 text-rose-400";
+            }
+        }
+
+        function closePuzzleModal() {
+            const modal = document.getElementById('puzzleModal');
+            const modalContent = document.getElementById('puzzleModalContent');
+
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Direct Reward Modal
+        function openRewardModalDirect(day, triggerParticles = true) {
             const item = calendarData.find(d => d.day === day);
             if (!item) return;
 
@@ -591,10 +838,6 @@
             document.getElementById('modalDayNumber').textContent = `Türchen Tag ${item.day}`;
             document.getElementById('modalTitle').textContent = item.title;
             document.getElementById('modalMessage').textContent = item.message;
-            document.getElementById('modalCategoryTag').textContent = item.category;
-
-            const iconClass = CATEGORIES[item.category] || 'fa-gift';
-            document.getElementById('modalIcon').className = `fa-solid ${iconClass}`;
 
             updateModalRedeemStatusUI(item.redeemed);
 
@@ -619,11 +862,11 @@
             const statusTag = document.getElementById('modalStatusTag');
 
             if (isRedeemed) {
-                btn.className = "w-full py-3.5 px-6 rounded-2xl bg-amber-950/60 hover:bg-amber-900/60 text-amber-300 font-semibold text-sm border border-amber-800/40 transition-all flex items-center justify-center gap-2";
+                btn.className = "w-full py-3.5 px-6 rounded-2xl bg-sky-950/60 hover:bg-sky-900/60 text-sky-300 font-semibold text-sm border border-sky-800/40 transition-all flex items-center justify-center gap-2";
                 btnText.textContent = "Als 'Offen' markieren";
                 statusTag.classList.remove('hidden');
             } else {
-                btn.className = "w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2";
+                btn.className = "w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg transition-all flex items-center justify-center gap-2";
                 btnText.textContent = "Als 'Eingelöst' markieren";
                 statusTag.classList.add('hidden');
             }
@@ -656,9 +899,9 @@
             }, 300);
         }
 
-        // Particle Celebration Animation (Hearts, Stars, Gold Confetti)
+        // Particle Animation (Blue Glitters, Stars & Hearts)
         function spawnCelebrationParticles() {
-            const symbols = ['❤️', '✨', '⭐', '💖', '🎁', '🎉'];
+            const symbols = ['🌺', '✨', '⭐', '💙', '🧪', '❄️'];
             const container = document.body;
 
             for (let i = 0; i < 35; i++) {
@@ -677,13 +920,10 @@
 
                 container.appendChild(particle);
 
-                setTimeout(() => {
-                    particle.remove();
-                }, duration * 1000);
+                setTimeout(() => { particle.remove(); }, duration * 1000);
             }
         }
 
-        // Stats Counter Update
         function updateStats() {
             const unlocked = calendarData.filter(d => d.unlocked).length;
             const redeemed = calendarData.filter(d => d.redeemed).length;
@@ -692,7 +932,6 @@
             document.getElementById('redeemedCount').textContent = redeemed;
         }
 
-        // Tab Switching
         function switchTab(tab) {
             const tabMain = document.getElementById('tabMain');
             const tabHistory = document.getElementById('tabHistory');
@@ -703,18 +942,18 @@
                 tabMain.classList.remove('hidden');
                 tabHistory.classList.add('hidden');
 
-                btnMain.className = "px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-rose-600 text-white shadow-md";
-                btnHistory.className = "px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition-all duration-300";
+                btnMain.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/20";
+                btnHistory.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300";
             } else {
                 tabMain.classList.add('hidden');
                 tabHistory.classList.remove('hidden');
 
-                btnHistory.className = "px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-rose-600 text-white shadow-md";
-                btnMain.className = "px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition-all duration-300";
+                btnHistory.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/20";
+                btnMain.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300";
             }
         }
 
-        // ADMIN PANEL FUNCTIONALITY
+        // ADMIN PANEL LOGIC
         function openAdminModal() {
             document.getElementById('adminModal').classList.remove('hidden');
             if (isAdminLoggedIn) {
@@ -722,7 +961,6 @@
             } else {
                 document.getElementById('adminAuthSection').classList.remove('hidden');
                 document.getElementById('adminPanelContent').classList.add('hidden');
-                document.getElementById('adminPassInput').focus();
             }
         }
 
@@ -737,7 +975,6 @@
             if (pass === ADMIN_PIN) {
                 isAdminLoggedIn = true;
                 err.classList.add('hidden');
-                document.getElementById('adminPassInput').value = '';
                 showAdminPanel();
             } else {
                 err.classList.remove('hidden');
@@ -755,20 +992,20 @@
             const list = document.getElementById('adminDaysList');
             list.innerHTML = '';
 
-            calendarData.forEach((item, index) => {
+            calendarData.forEach((item) => {
                 const row = document.createElement('div');
-                row.className = "bg-black/50 p-4 rounded-2xl border border-white/10 space-y-3";
+                row.className = "bg-slate-950 p-4 rounded-2xl border border-sky-900/40 space-y-3";
 
                 row.innerHTML = `
-                    <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-white/10">
-                        <span class="text-sm font-bold text-amber-400">Türchen Tag ${item.day}</span>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-sky-900/30">
+                        <span class="text-sm font-bold text-sky-300">Türchen Tag ${item.day}</span>
                         <div class="flex items-center space-x-3 text-xs">
                             <label class="flex items-center space-x-1 cursor-pointer">
-                                <input type="checkbox" id="admin_unlock_${item.day}" ${item.unlocked ? 'checked' : ''} class="rounded bg-black border-white/20 text-rose-600 focus:ring-0">
+                                <input type="checkbox" id="admin_unlock_${item.day}" ${item.unlocked ? 'checked' : ''} class="rounded bg-slate-900 border-sky-800 text-sky-500">
                                 <span class="text-gray-300">Freigeschaltet</span>
                             </label>
                             <label class="flex items-center space-x-1 cursor-pointer">
-                                <input type="checkbox" id="admin_redeem_${item.day}" ${item.redeemed ? 'checked' : ''} class="rounded bg-black border-white/20 text-emerald-500 focus:ring-0">
+                                <input type="checkbox" id="admin_redeem_${item.day}" ${item.redeemed ? 'checked' : ''} class="rounded bg-slate-900 border-sky-800 text-emerald-500">
                                 <span class="text-gray-300">Eingelöst</span>
                             </label>
                         </div>
@@ -776,24 +1013,22 @@
                     
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <div>
-                            <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">5-Stelliger Code</label>
-                            <input type="text" id="admin_code_${item.day}" value="${item.code}" maxlength="5" class="w-full bg-black/60 border border-white/15 rounded-xl px-3 py-1.5 text-xs font-mono text-amber-300 outline-none focus:border-amber-400 uppercase">
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Code</label>
+                            <input type="text" id="admin_code_${item.day}" value="${item.code}" maxlength="5" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs font-mono text-sky-300 uppercase">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">Titel / Gutschein Name</label>
-                            <input type="text" id="admin_title_${item.day}" value="${item.title}" class="w-full bg-black/60 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-amber-400">
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Titel / Gutschein</label>
+                            <input type="text" id="admin_title_${item.day}" value="${item.title}" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs text-white">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">Kategorie</label>
-                            <select id="admin_cat_${item.day}" class="w-full bg-black/60 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-amber-400">
-                                ${Object.keys(CATEGORIES).map(cat => `<option value="${cat}" ${item.category === cat ? 'selected' : ''}>${cat}</option>`).join('')}
-                            </select>
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Antwort / Lösung</label>
+                            <input type="text" id="admin_ans_${item.day}" value="${item.answer}" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs text-white">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">Persönliche Nachricht</label>
-                        <textarea id="admin_msg_${item.day}" rows="2" class="w-full bg-black/60 border border-white/15 rounded-xl p-2 text-xs text-gray-200 outline-none focus:border-amber-400 resize-none">${item.message}</textarea>
+                        <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Geschenk / Nachricht</label>
+                        <textarea id="admin_msg_${item.day}" rows="2" class="w-full bg-slate-900 border border-sky-900 rounded-xl p-2 text-xs text-sky-100 resize-none">${item.message}</textarea>
                     </div>
                 `;
 
@@ -805,14 +1040,14 @@
             calendarData.forEach(item => {
                 const codeInput = document.getElementById(`admin_code_${item.day}`);
                 const titleInput = document.getElementById(`admin_title_${item.day}`);
-                const catInput = document.getElementById(`admin_cat_${item.day}`);
+                const ansInput = document.getElementById(`admin_ans_${item.day}`);
                 const msgInput = document.getElementById(`admin_msg_${item.day}`);
                 const unlockInput = document.getElementById(`admin_unlock_${item.day}`);
                 const redeemInput = document.getElementById(`admin_redeem_${item.day}`);
 
                 if (codeInput) item.code = codeInput.value.trim().toUpperCase();
                 if (titleInput) item.title = titleInput.value.trim();
-                if (catInput) item.category = catInput.value;
+                if (ansInput) item.answer = ansInput.value.trim();
                 if (msgInput) item.message = msgInput.value.trim();
                 if (unlockInput) item.unlocked = unlockInput.checked;
                 if (redeemInput) item.redeemed = redeemInput.checked;
@@ -824,39 +1059,24 @@
             updateStats();
 
             const feedback = document.getElementById('adminFeedback');
-            feedback.textContent = "✅ Alle Änderungen gespeichert!";
+            feedback.textContent = "✅ Gespeichert!";
             setTimeout(() => { feedback.textContent = ''; }, 3000);
         }
 
         function resetAllToDefaults() {
-            if (confirm("Möchtest du wirklich alle Türchen auf die Standardwerte zurücksetzen? Custom-Codes gehen verloren!")) {
+            if (confirm("Auf Standardwerte zurücksetzen?")) {
                 calendarData = DEFAULT_CALENDAR_DATA.map(d => ({ ...d }));
                 saveCalendarData();
                 renderAdminDaysList();
                 renderCalendarGrid();
                 renderHistoryGrid();
                 updateStats();
-
-                const feedback = document.getElementById('adminFeedback');
-                feedback.textContent = "🔄 Auf Standardwerte zurückgesetzt!";
-                setTimeout(() => { feedback.textContent = ''; }, 3000);
             }
         }
 
-        function toggleAllDoorsStatus(unlockedStatus) {
-            calendarData.forEach(item => {
-                item.unlocked = unlockedStatus;
-            });
-            saveCalendarData();
-            renderAdminDaysList();
-            renderCalendarGrid();
-            renderHistoryGrid();
-            updateStats();
-        }
-
-        // Background Snow Effect
-        function initSnowCanvas() {
-            const canvas = document.getElementById('snowCanvas');
+        // Background Star/Snow Canvas Effect
+        function initStarCanvas() {
+            const canvas = document.getElementById('starCanvas');
             const ctx = canvas.getContext('2d');
 
             function resize() {
@@ -866,28 +1086,28 @@
             resize();
             window.addEventListener('resize', resize);
 
-            const flakes = Array.from({ length: 45 }, () => ({
+            const stars = Array.from({ length: 50 }, () => ({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
                 r: Math.random() * 2 + 1,
-                d: Math.random() * 1 + 0.5
+                d: Math.random() * 0.8 + 0.3
             }));
 
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+                ctx.fillStyle = "rgba(56, 189, 248, 0.7)";
                 ctx.beginPath();
-                for (let f of flakes) {
-                    ctx.moveTo(f.x, f.y);
-                    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+                for (let s of stars) {
+                    ctx.moveTo(s.x, s.y);
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2, true);
                 }
                 ctx.fill();
 
-                for (let f of flakes) {
-                    f.y += f.d;
-                    if (f.y > canvas.height) {
-                        f.y = -10;
-                        f.x = Math.random() * canvas.width;
+                for (let s of stars) {
+                    s.y += s.d;
+                    if (s.y > canvas.height) {
+                        s.y = -10;
+                        s.x = Math.random() * canvas.width;
                     }
                 }
                 requestAnimationFrame(draw);
