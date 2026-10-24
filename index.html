@@ -1,149 +1,20 @@
-<!DOCTYPE html>
-<html lang="de" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stitch & Disney Adventskalender ✨</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        stitch: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                            dark: '#030712',
-                            panel: '#0f172a',
-                            card: '#1e293b',
-                            accent: '#38bdf8',
-                            pink: '#f43f5e'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        disney: ['Georgia', 'serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- ... existing code ... -->
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Firebase Realtime Database SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
             background-color: #030712;
             color: #f3f4f6;
         }
-
-        .font-stitch {
-            font-family: 'Fredoka', cursive;
-        }
-
-        /* Floating Particle Animation */
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) rotate(0deg) scale(0.6);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) rotate(360deg) scale(1.4);
-                opacity: 0;
-            }
-        }
-
-        .celebration-particle {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            animation: floatUp 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        /* Glassmorphism Styling */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(56, 189, 248, 0.25);
-        }
-
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        /* Glowing Effects */
-        .glow-stitch {
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #030712;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #0c4a6e;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #38bdf8;
-        }
-
-        /* Memory Game Card Styles */
-        .memory-card {
-            perspective: 1000px;
-        }
-        .memory-card-inner {
-            transition: transform 0.4s;
-            transform-style: preserve-3d;
-        }
-        .memory-card.flipped .memory-card-inner {
-            transform: rotateY(180deg);
-        }
-        .memory-card-front, .memory-card-back {
-            backface-visibility: hidden;
-        }
-        .memory-card-back {
-            transform: rotateY(180deg);
-        }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col selection:bg-sky-500 selection:text-white">
-
-    <!-- Snow & Sparkle Background Canvas -->
-    <canvas id="starCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-50"></canvas>
-
-    <!-- HEADER / NAVIGATION -->
-    <header class="relative z-20 border-b border-sky-900/40 bg-slate-950/80 backdrop-blur-md sticky top-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white text-xl">
-                    🌺
-                </div>
-                <div>
-                    <h1 class="font-stitch text-2xl sm:text-3xl text-sky-300 leading-none tracking-wide">Ohana Adventskalender</h1>
-                    <p class="text-[11px] text-sky-400/80 uppercase font-medium tracking-widest mt-0.5">Stitch & Disney Zauber 🌺✨</p>
-                </div>
-            </div>
-
+<!-- ... existing code ... -->
             <!-- Tab Buttons -->
             <nav class="flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-2xl border border-sky-900/50">
                 <button id="navMainBtn" onclick="switchTab('main')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/20">
@@ -156,214 +27,30 @@
         </div>
     </header>
 
+    <!-- LIVE SYNC STATUS BADGE -->
+    <div id="syncStatusBadge" class="fixed bottom-4 left-4 z-40 px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-900/90 border border-sky-800 text-sky-300 flex items-center gap-2 shadow-lg backdrop-blur-md">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="syncDot"></span>
+        <span id="syncText">Verbinde Live-Sync...</span>
+    </div>
+
     <!-- MAIN CONTAINER -->
     <main class="relative z-10 flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <!-- TAB 1: MAIN KALENDER VIEW -->
-        <section id="tabMain" class="space-y-8 transition-opacity duration-300">
-
-            <!-- Code Input Hero Box -->
-            <div class="glass-panel rounded-3xl p-6 sm:p-8 text-center max-w-xl mx-auto border border-sky-400/30 shadow-2xl relative overflow-hidden">
-                <div class="absolute -right-12 -bottom-12 w-40 h-40 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute -left-12 -top-12 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
-
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-400/30 text-sky-300 mb-3">
-                    <i class="fa-solid fa-key text-xl"></i>
-                </div>
-                <h2 class="text-xl sm:text-2xl font-bold text-white mb-2">3D-Kalender Code Eingeben</h2>
-                <p class="text-xs sm:text-sm text-sky-200/80 mb-6 max-w-md mx-auto">
-                    Gib den 5-stelligen Code aus deinem gedruckten Türchen ein, um das heutige Disney-Minispiel zu starten!
-                </p>
-
-                <!-- Code Input Form -->
-                <form id="codeForm" onsubmit="handleCodeSubmit(event)" class="space-y-4">
-                    <div class="flex justify-center items-center gap-2 max-w-xs mx-auto">
-                        <input type="text" id="codeInput" maxlength="5" placeholder="62600" 
-                            class="w-full text-center text-2xl sm:text-3xl tracking-[0.3em] font-mono font-bold bg-slate-950/80 border-2 border-sky-800 focus:border-sky-400 focus:ring-4 focus:ring-sky-500/20 text-sky-300 rounded-2xl py-3 px-4 outline-none uppercase transition-all duration-300 placeholder-slate-700 shadow-inner">
-                    </div>
-                    <button type="submit" 
-                        class="w-full max-w-xs py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold text-sm shadow-lg shadow-sky-500/20 transform hover:-translate-y-0.5 transition-all duration-300 active:translate-y-0">
-                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Türchen Öffnen
-                    </button>
-                </form>
-
-                <div id="codeFeedback" class="mt-4 text-xs sm:text-sm font-medium min-h-[20px] transition-all"></div>
-            </div>
-
-            <!-- Stats Bar -->
-            <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900/60 border border-sky-900/30 rounded-2xl p-4 px-6 text-xs sm:text-sm text-sky-200/70">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-box-open text-sky-400"></i>
-                    <span>Freigeschaltet: <strong id="unlockedCount" class="text-white">0</strong> / 24</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-heart text-rose-400"></i>
-                    <span>Eingelöst: <strong id="redeemedCount" class="text-white">0</strong> / 24</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-sparkles text-sky-300"></i>
-                    <span>Ohana heißt Familie ❤️</span>
-                </div>
-            </div>
-
-            <!-- 24 Days Grid -->
-            <div>
-                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-cubes text-sky-400"></i> Alle 24 Türchen
-                </h3>
-                <div id="calendarGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-                    <!-- Dynamic Grid Items -->
-                </div>
-            </div>
-
-        </section>
-
-        <!-- TAB 2: HISTORY VIEW -->
-        <section id="tabHistory" class="space-y-6 hidden transition-opacity duration-300">
-            <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-sky-400/20">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-sky-900/30">
-                    <div>
-                        <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-                            <i class="fa-solid fa-star text-sky-400"></i>
-                            Euer Einlösungsverlauf
-                        </h2>
-                        <p class="text-xs sm:text-sm text-sky-200/70 mt-1">
-                            Hier findest du alle bereits freigeschalteten Überraschungen. Klicke auf eine Karte, um das Minispiel erneut zu spielen oder die Nachricht anzuzeigen!
-                        </p>
-                    </div>
-                </div>
-
-                <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Dynamic History Items -->
-                </div>
-
-                <div id="emptyHistoryMsg" class="text-center py-12 hidden">
-                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-800/50 flex items-center justify-center text-sky-400">
-                        <i class="fa-solid fa-lock text-2xl"></i>
-                    </div>
-                    <h4 class="text-lg font-medium text-gray-300">Noch keine Türchen freigeschaltet</h4>
-                    <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">Gib oben deinen ersten 5-stelligen Code aus dem 3D-Druck-Kalender ein!</p>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="relative z-10 border-t border-sky-900/30 py-6 bg-slate-950/60 text-center text-xs text-gray-500">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>Made with ❤️ & 3D-Druck Liebe | Stitch & Disney Edition 🌺</p>
-            <button onclick="openAdminModal()" class="text-gray-400 hover:text-sky-400 transition-colors p-2 rounded-lg hover:bg-slate-800/50 flex items-center gap-1.5">
-                <i class="fa-solid fa-gear"></i> <span>Admin-Einstellungen</span>
-            </button>
-        </div>
-    </footer>
-
-    <!-- MODAL 1: PUZZLE / MINIGAME MODAL -->
-    <div id="puzzleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 text-center border-2 border-sky-400/40 shadow-2xl relative overflow-hidden" id="puzzleModalContent">
-            
-            <button onclick="closePuzzleModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800/60 hover:bg-slate-700 text-gray-300 hover:text-white flex items-center justify-center transition-colors">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-
-            <!-- Top Header -->
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-sky-500/20 text-sky-300 text-2xl mb-3 border border-sky-400/30">
-                <i id="puzzleIcon" class="fa-solid fa-puzzle-piece"></i>
-            </div>
-            <div id="puzzleDayTitle" class="text-xs font-bold uppercase tracking-widest text-sky-400 mb-1">Türchen Tag 1</div>
-            <h3 id="puzzleName" class="text-xl sm:text-2xl font-bold text-white mb-4">Minispiel Name</h3>
-
-            <!-- Dynamic Game Container -->
-            <div id="gameContainer" class="bg-slate-950/70 rounded-2xl p-4 border border-sky-900/40 mb-6 text-left relative min-h-[160px] flex flex-col justify-center">
-                <!-- Content injected dynamically by JS depending on game type -->
-            </div>
-
-            <div id="puzzleFeedback" class="text-xs font-semibold mb-4 min-h-[18px]"></div>
-
-            <button id="solveGameBtn" onclick="checkCurrentGameAnswer()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold text-sm shadow-lg shadow-sky-500/20 transition-all">
-                <i class="fa-solid fa-circle-check mr-2"></i> Antwort Überprüfen
-            </button>
-        </div>
-    </div>
-
-    <!-- MODAL 2: REWARD GIFT REVEAL MODAL -->
-    <div id="rewardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 text-center border-2 border-sky-400/50 shadow-2xl relative overflow-hidden" id="rewardModalContent">
-            
-            <button onclick="closeRewardModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800/60 hover:bg-slate-700 text-gray-300 hover:text-white flex items-center justify-center transition-colors">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-
-            <!-- Top Icon Badge -->
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-tr from-sky-400 to-blue-600 shadow-lg shadow-sky-500/30 text-white text-3xl mb-4 border-4 border-slate-900 animate-bounce">
-                <i id="modalIcon" class="fa-solid fa-gift"></i>
-            </div>
-
-            <div id="modalDayNumber" class="text-xs font-bold uppercase tracking-widest text-sky-400 mb-1">Rätsel Gelöst! Tag 1</div>
-            <h3 id="modalTitle" class="text-2xl sm:text-3xl font-bold text-white mb-3">Gutschein Name</h3>
-
-            <!-- Message Box -->
-            <div class="bg-slate-950/70 rounded-2xl p-5 border border-sky-900/40 mb-6 text-left relative">
-                <p id="modalMessage" class="text-sm sm:text-base text-sky-100 leading-relaxed italic pl-2">
-                    Hier steht deine süße Nachricht.
-                </p>
-            </div>
-
-            <!-- Redemption Action Button -->
-            <div class="space-y-3">
-                <button id="modalRedeemBtn" onclick="toggleRedeemCurrentDay()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-check"></i> <span id="modalRedeemBtnText">Als "Eingelöst" markieren</span>
-                </button>
-
-                <p id="modalStatusTag" class="text-xs text-emerald-400 font-medium hidden">
-                    <i class="fa-solid fa-check-double mr-1"></i> Dieser Gutschein wurde bereits als eingelöst markiert!
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL 3: ADMIN PANEL -->
-    <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-lg hidden">
-        <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl p-6 flex flex-col border border-sky-400/30 shadow-2xl">
-            
-            <div class="flex items-center justify-between pb-4 border-b border-sky-900/40 mb-4">
-                <div>
-                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-sky-400"></i> Admin-Verwaltung
-                    </h3>
-                    <p class="text-xs text-sky-200/60">Verwalte alle 24 Codes, Minispiele & Gutscheine</p>
-                </div>
-                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white p-2">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <!-- Admin Authentication -->
-            <div id="adminAuthSection" class="py-12 text-center space-y-4 my-auto">
-                <div class="w-16 h-16 mx-auto rounded-full bg-sky-500/10 border border-sky-400/20 flex items-center justify-center text-sky-400">
-                    <i class="fa-solid fa-shield-halved text-2xl"></i>
-                </div>
-                <h4 class="text-lg font-semibold text-white">Admin-Zugang</h4>
-                <p class="text-xs text-gray-400 max-w-xs mx-auto">Standard PIN: <span class="text-sky-300 font-mono">1234</span></p>
-                <div class="flex justify-center gap-2 max-w-xs mx-auto pt-2">
-                    <input type="password" id="adminPassInput" class="bg-slate-950 border border-sky-800 rounded-xl px-4 py-2 text-center text-white outline-none focus:border-sky-400 w-full" placeholder="PIN eingeben">
-                    <button onclick="checkAdminPass()" class="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-white font-medium rounded-xl text-sm transition-all whitespace-nowrap">
-                        Login
-                    </button>
-                </div>
-                <p id="adminAuthErr" class="text-xs text-rose-400 hidden font-medium">Falscher Passcode!</p>
-            </div>
-
+<!-- ... existing code ... -->
             <!-- Admin Panel Content -->
             <div id="adminPanelContent" class="hidden flex-col flex-grow overflow-hidden space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-950/60 rounded-2xl border border-sky-900/30">
                     <div class="flex flex-wrap items-center gap-2">
                         <button onclick="saveAdminChanges()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-md">
-                            <i class="fa-solid fa-floppy-disk"></i> Speichern
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Live Speichern
                         </button>
-                        <button onclick="resetAllToDefaults()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-sky-200 rounded-xl text-xs font-medium transition-colors">
-                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Defaults
+                        <button onclick="massUnlock(true)" class="px-3 py-2 bg-sky-900/60 hover:bg-sky-800 text-sky-200 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-lock-open mr-1"></i> Alle Öffnen
+                        </button>
+                        <button onclick="massUnlock(false)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-sky-200 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-lock mr-1"></i> Alle Sperren
+                        </button>
+                        <button onclick="resetAllToDefaults()" class="px-3 py-2 bg-rose-950/60 hover:bg-rose-900 text-rose-300 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset
                         </button>
                     </div>
                     <span id="adminFeedback" class="text-xs font-medium text-emerald-400 min-h-[16px]"></span>
@@ -386,9 +73,41 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC WITH FIREBASE REALTIME SYNC -->
     <script>
         const ADMIN_PIN = "1234";
+
+        // FIREBASE CONFIGURATION (Placeholder or loaded dynamically)
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            databaseURL: "https://stitch-adventskalender-default-rtdb.firebaseio.com"
+        };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'stitch-kalender-default';
+
+        let dbRef = null;
+        let isFirebaseConnected = false;
+
+        // Sound Magic (Web Audio API Glockenspiel)
+        function playChimeSound() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.12 + 0.6);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + idx * 0.12);
+                    osc.stop(ctx.currentTime + idx * 0.12 + 0.6);
+                });
+            } catch(e) {}
+        }
 
         // 24 Days Default Data with Mini-Games
         const DEFAULT_CALENDAR_DATA = [
@@ -418,32 +137,96 @@
             { day: 24, code: "62624", gameType: "unscramble", gameTitle: "Das Weihnachts-Rätsel 🎄", prompt: "Löse das letzte Zauberwort:", answer: "GESCHENK", title: "Der Master-Wunsch-Joker 🎁", category: "Joker", message: "Frohe Weihnachten! Dieser Gutschein erfüllt dir einen ganz besonderen Wunsch deiner Wahl. ❤️", unlocked: false, redeemed: false }
         ];
 
-        let calendarData = [];
+        let calendarData = [...DEFAULT_CALENDAR_DATA];
         let activeDayForModal = null;
         let activeGameData = {};
         let isAdminLoggedIn = false;
 
-        // Init App
+        // Init App & Live Firebase Sync
         window.addEventListener('DOMContentLoaded', () => {
-            loadCalendarData();
+            initFirebaseSync();
             renderCalendarGrid();
             renderHistoryGrid();
             updateStats();
             initStarCanvas();
         });
 
-        function loadCalendarData() {
+        // Setup Realtime Database Live Synchronization
+        function initFirebaseSync() {
+            try {
+                if (typeof firebase !== 'undefined') {
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    }
+                    dbRef = firebase.database().ref(`artifacts/${appId}/calendar`);
+
+                    // Listen for LIVE changes in Realtime Database
+                    dbRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data && Array.isArray(data) && data.length > 0) {
+                            calendarData = data;
+                        } else {
+                            // If empty, initialize DB with defaults
+                            dbRef.set(DEFAULT_CALENDAR_DATA);
+                            calendarData = [...DEFAULT_CALENDAR_DATA];
+                        }
+                        
+                        isFirebaseConnected = true;
+                        updateSyncBadge(true, "Live mit Firebase verbunden");
+                        refreshUI();
+                    }, (error) => {
+                        console.warn("Firebase sync error, using local fallback:", error);
+                        useLocalFallback();
+                    });
+                } else {
+                    useLocalFallback();
+                }
+            } catch(e) {
+                console.warn("Firebase initialization failed, using local fallback:", e);
+                useLocalFallback();
+            }
+        }
+
+        function useLocalFallback() {
+            isFirebaseConnected = false;
+            updateSyncBadge(false, "Lokaler Modus (Offline)");
             const saved = localStorage.getItem('stitch_adventskalender_data');
             if (saved) {
                 try { calendarData = JSON.parse(saved); } catch(e) { calendarData = [...DEFAULT_CALENDAR_DATA]; }
             } else {
                 calendarData = [...DEFAULT_CALENDAR_DATA];
-                saveCalendarData();
+            }
+            refreshUI();
+        }
+
+        function updateSyncBadge(connected, text) {
+            const dot = document.getElementById('syncDot');
+            const label = document.getElementById('syncText');
+            if (connected) {
+                dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+                label.textContent = text;
+            } else {
+                dot.className = "w-2 h-2 rounded-full bg-amber-400";
+                label.textContent = text;
             }
         }
 
         function saveCalendarData() {
-            localStorage.setItem('stitch_adventskalender_data', JSON.stringify(calendarData));
+            if (isFirebaseConnected && dbRef) {
+                dbRef.set(calendarData).catch(err => {
+                    console.error("Firebase save error:", err);
+                    localStorage.setItem('stitch_adventskalender_data', JSON.stringify(calendarData));
+                });
+            } else {
+                localStorage.setItem('stitch_adventskalender_data', JSON.stringify(calendarData));
+            }
+        }
+
+        function refreshUI() {
+            renderCalendarGrid();
+            renderHistoryGrid();
+            updateStats();
+            if (isAdminLoggedIn) renderAdminDaysList();
         }
 
         function renderCalendarGrid() {
@@ -614,7 +397,7 @@
                         _ _ _ _
                     </div>
                     <div id="letterButtons" class="flex flex-wrap justify-center gap-2">
-                        ${scrambled.split('').map((char, idx) => `
+                        ${scrambled.split('').map((char) => `
                             <button onclick="selectLetter('${char}', this)" class="w-10 h-10 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-md transition-all">
                                 ${char}
                             </button>
@@ -801,9 +584,6 @@
             if (isCorrect) {
                 item.unlocked = true;
                 saveCalendarData();
-                renderCalendarGrid();
-                renderHistoryGrid();
-                updateStats();
 
                 closePuzzleModal();
                 setTimeout(() => {
@@ -852,6 +632,7 @@
             }, 10);
 
             if (triggerParticles) {
+                playChimeSound();
                 spawnCelebrationParticles();
             }
         }
@@ -879,9 +660,6 @@
                 item.redeemed = !item.redeemed;
                 saveCalendarData();
                 updateModalRedeemStatusUI(item.redeemed);
-                renderCalendarGrid();
-                renderHistoryGrid();
-                updateStats();
             }
         }
 
@@ -1054,24 +832,20 @@
             });
 
             saveCalendarData();
-            renderCalendarGrid();
-            renderHistoryGrid();
-            updateStats();
 
             const feedback = document.getElementById('adminFeedback');
-            feedback.textContent = "✅ Gespeichert!";
+            feedback.textContent = "⚡ Live auf allen Geräten aktualisiert!";
             setTimeout(() => { feedback.textContent = ''; }, 3000);
         }
 
+        function massUnlock(status) {
+            calendarData.forEach(item => { item.unlocked = status; });
+            saveCalendarData();
+        }
+
         function resetAllToDefaults() {
-            if (confirm("Auf Standardwerte zurücksetzen?")) {
-                calendarData = DEFAULT_CALENDAR_DATA.map(d => ({ ...d }));
-                saveCalendarData();
-                renderAdminDaysList();
-                renderCalendarGrid();
-                renderHistoryGrid();
-                updateStats();
-            }
+            calendarData = DEFAULT_CALENDAR_DATA.map(d => ({ ...d }));
+            saveCalendarData();
         }
 
         // Background Star/Snow Canvas Effect
