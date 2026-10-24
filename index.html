@@ -864,16 +864,18 @@
             });
         }
 
-        function saveAdminChanges() {
+function saveAdminChanges() {
             calendarData.forEach(item => {
                 const codeInput = document.getElementById(`admin_code_${item.day}`);
                 const titleInput = document.getElementById(`admin_title_${item.day}`);
+                const catInput = document.getElementById(`admin_cat_${item.day}`);
                 const msgInput = document.getElementById(`admin_msg_${item.day}`);
                 const unlockInput = document.getElementById(`admin_unlock_${item.day}`);
                 const redeemInput = document.getElementById(`admin_redeem_${item.day}`);
 
                 if (codeInput) item.code = codeInput.value.trim().toUpperCase();
                 if (titleInput) item.title = titleInput.value.trim();
+                if (catInput) item.category = catInput.value.trim();
                 if (msgInput) item.message = msgInput.value.trim();
                 if (unlockInput) item.unlocked = unlockInput.checked;
                 if (redeemInput) item.redeemed = redeemInput.checked;
