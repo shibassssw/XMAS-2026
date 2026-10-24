@@ -133,18 +133,19 @@
                     <p class="text-[10px] sm:text-xs text-sky-300/70 font-medium">Voller Liebe❤️</p>
                 </div>
             </div>
+            
+            <!-- Tab Buttons (Clean & Empty Header Navigation) -->
+            <nav class="flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-2xl border border-sky-900/50"></nav>
         </div>
     </header>
 
-
-            
     <!-- LIVE SYNC STATUS BADGE -->
     <div id="syncStatusBadge" class="fixed bottom-4 left-4 z-40 px-3 py-1.5 rounded-full text-[11px] font-medium bg-slate-900/90 border border-sky-800 text-sky-300 flex items-center gap-2 shadow-lg backdrop-blur-md">
         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="syncDot"></span>
         <span id="syncText">Verbinde mit Live-Datenbank...</span>
     </div>
 
-    <!-- MAIN CONTAINER (Sauber unter dem Header platziert) -->
+    <!-- MAIN CONTAINER -->
     <main class="relative z-10 flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         <!-- TAB 1: MAIN KALENDER -->
@@ -219,31 +220,6 @@
 
         </div>
 
-        <!-- TAB 2: EINLÖSUNGSVERLAUF (HISTORY) -->
-        <div id="tabHistory" class="hidden space-y-6">
-            <div class="bg-slate-900/60 border border-sky-900/40 rounded-3xl p-6">
-                <div class="flex items-center space-x-3 mb-2">
-                    <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                    </div>
-                    <h3 class="font-display font-bold text-xl text-white">Dein Einlösungsverlauf</h3>
-                </div>
-                <p class="text-xs sm:text-sm text-sky-200/70">
-                    Hier findest du alle Türchen, die du bereits freigeschaltet hast. Klicke einfach auf eine Karte, um die Zauber-Animation und deine Nachricht jederzeit erneut abzuspielen! ✨
-                </p>
-            </div>
-
-            <div id="historyGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <!-- Dynamische Verlaufs-Karten -->
-            </div>
-
-            <div id="emptyHistoryMsg" class="text-center py-12 glass-card rounded-3xl border border-sky-900/30">
-                <div class="text-4xl mb-3">❤️</div>
-                <h4 class="font-display font-bold text-lg text-white mb-1">Noch keine Türchen geöffnet</h4>
-                <p class="text-xs text-sky-200/60 max-w-xs mx-auto">Gib oben deinen ersten 5-stelligen Code ein, um hier deinen Verlauf aufzubauen!</p>
-            </div>
-        </div>
-
     </main>
 
     <!-- FLOATING ADMIN GEAR BUTTON -->
@@ -259,7 +235,6 @@
     <div id="rewardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
         <div id="rewardModalContent" class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-8 border-2 border-sky-400/50 relative shadow-2xl transform scale-95 transition-transform duration-300 text-center overflow-hidden">
             
-            <!-- Glow background -->
             <div class="absolute -top-20 -left-20 w-40 h-40 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -267,7 +242,6 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <!-- Stitch & Angel Badge -->
             <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-semibold mb-4">
                 <span>Dustins Geschenk</span>
             </div>
@@ -280,7 +254,6 @@
                 Gutschein-Titel
             </h3>
 
-            <!-- Message Card -->
             <div class="bg-slate-950/80 border border-sky-800/60 rounded-2xl p-5 mb-6 text-left relative overflow-hidden">
                 <div class="text-xs font-semibold uppercase tracking-wider text-sky-400 mb-1 flex items-center justify-between">
                     <span>Geschenkinfo:</span>
@@ -291,7 +264,6 @@
                 </p>
             </div>
 
-            <!-- Action Buttons -->
             <div class="space-y-2.5">
                 <button id="modalRedeemBtn" onclick="toggleRedeemCurrentDay()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-check"></i>
@@ -376,7 +348,6 @@
     <script>
         const ADMIN_PIN = "1234";
 
-        // FIREBASE CONFIGURATION
         const firebaseConfig = {
             apiKey: "AIzaSyA3wLoh9_Hmf-9vbBjI49sU7gVjbkLQcWA",
             authDomain: "xmas2026-c0eba.firebaseapp.com",
@@ -390,13 +361,12 @@
         let dbRef = null;
         let isFirebaseConnected = false;
 
-        // Sound Magic (Web Audio API Glockenspiel)
         function playChimeSound() {
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 if (!AudioCtx) return;
                 const ctx = new AudioCtx();
-                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                const notes = [523.25, 659.25, 783.99, 1046.50];
                 notes.forEach((freq, idx) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
@@ -412,7 +382,6 @@
             } catch(e) {}
         }
 
-        // 24 Vordefinierte Türchen mit Standard-Codes (10001 - 10024)
         const DEFAULT_CALENDAR_DATA = [
             { day: 1, code: "10001", title: "Film-Aussuch-Recht 🎬", category: "Unterhaltung", message: "Aloha! Heute darfst du komplett alleine entscheiden, welchen Disney-Film wir heute Abend schauen! ❤️", unlocked: false, redeemed: false },
             { day: 2, code: "10002", title: "Rückenmassage (20 Min) 💆‍♀️", category: "Verwöhnen", message: "Ohana heißt Familie! Du hast dir eine 20-minütige entspannende Rückenmassage verdient.", unlocked: false, redeemed: false },
@@ -444,16 +413,13 @@
         let activeDayForModal = null;
         let isAdminLoggedIn = false;
 
-        // Init App & Firebase
         window.addEventListener('DOMContentLoaded', () => {
             initFirebaseSync();
             renderCalendarGrid();
-            renderHistoryGrid();
             updateStats();
             initStarCanvas();
         });
 
-        // Initialize Firebase Realtime Database Live Listener
         function initFirebaseSync() {
             try {
                 if (typeof firebase !== 'undefined') {
@@ -462,7 +428,6 @@
                     }
                     dbRef = firebase.database().ref('doors');
 
-                    // Realtime Listener
                     dbRef.on('value', (snapshot) => {
                         const data = snapshot.val();
                         if (data && Array.isArray(data) && data.length > 0) {
@@ -525,7 +490,6 @@
 
         function refreshUI() {
             renderCalendarGrid();
-            renderHistoryGrid();
             updateStats();
             if (isAdminLoggedIn) renderAdminDaysList();
         }
@@ -573,57 +537,6 @@
             });
         }
 
-        function renderHistoryGrid() {
-            const grid = document.getElementById('historyGrid');
-            const emptyMsg = document.getElementById('emptyHistoryMsg');
-            const historyBadge = document.getElementById('historyBadge');
-            
-            grid.innerHTML = '';
-            const unlockedItems = calendarData.filter(d => d.unlocked);
-            historyBadge.textContent = unlockedItems.length;
-
-            if (unlockedItems.length === 0) {
-                emptyMsg.classList.remove('hidden');
-                return;
-            } else {
-                emptyMsg.classList.add('hidden');
-            }
-
-            unlockedItems.sort((a,b) => a.day - b.day).forEach(item => {
-                const card = document.createElement('div');
-                card.onclick = () => openRewardModal(item.day);
-                card.className = "glass-card rounded-2xl p-5 border border-sky-500/20 hover:border-sky-400/60 transition-all duration-300 cursor-pointer group relative overflow-hidden";
-                
-                card.innerHTML = `
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-2xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300 group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-gift"></i>
-                            </div>
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">Tag ${item.day}</span>
-                                <h4 class="text-base font-bold text-white group-hover:text-sky-300 transition-colors">${item.title}</h4>
-                            </div>
-                        </div>
-                        <span class="text-[10px] px-2.5 py-1 rounded-full font-semibold ${item.redeemed ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/40' : 'bg-sky-950 text-sky-300 border border-sky-800/40'}">
-                            ${item.redeemed ? 'Eingelöst' : 'Bereit'}
-                        </span>
-                    </div>
-                    <p class="text-xs text-sky-100/80 italic line-clamp-2 mb-3 bg-slate-950/50 p-2.5 rounded-xl border border-sky-900/30">
-                        "${item.message}"
-                    </p>
-                    <div class="flex items-center justify-between text-[11px] text-gray-400 pt-2 border-t border-white/5">
-                        <span class="text-sky-400/80"><i class="fa-solid fa-sparkles mr-1"></i>Klicken zum Abspielen</span>
-                        <span class="text-sky-300 font-medium group-hover:translate-x-1 transition-transform">
-                            Ansehen <i class="fa-solid fa-arrow-right ml-1"></i>
-                        </span>
-                    </div>
-                `;
-
-                grid.appendChild(card);
-            });
-        }
-
         function handleCodeSubmit(e) {
             e.preventDefault();
             const input = document.getElementById('codeInput');
@@ -657,7 +570,6 @@
             setTimeout(() => { feedback.textContent = ''; }, 4000);
         }
 
-        // Open Modal
         function openRewardModal(day, triggerParticles = true) {
             const item = calendarData.find(d => d.day === day);
             if (!item) return;
@@ -727,7 +639,6 @@
             }, 300);
         }
 
-        // Particle Effect
         function spawnCelebrationParticles() {
             const symbols = ['🌺', '✨', '⭐', '💙', '💖', '❄️'];
             const container = document.body;
@@ -760,28 +671,6 @@
             document.getElementById('redeemedCount').textContent = redeemed;
         }
 
-        function switchTab(tab) {
-            const tabMain = document.getElementById('tabMain');
-            const tabHistory = document.getElementById('tabHistory');
-            const btnMain = document.getElementById('navMainBtn');
-            const btnHistory = document.getElementById('navHistoryBtn');
-
-            if (tab === 'main') {
-                tabMain.classList.remove('hidden');
-                tabHistory.classList.add('hidden');
-
-                btnMain.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/20 flex items-center gap-1.5";
-                btnHistory.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300 flex items-center gap-1.5";
-            } else {
-                tabMain.classList.add('hidden');
-                tabHistory.classList.remove('hidden');
-
-                btnHistory.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/20 flex items-center gap-1.5";
-                btnMain.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300 flex items-center gap-1.5";
-            }
-        }
-
-        // ADMIN PANEL
         function openAdminModal() {
             document.getElementById('adminModal').classList.remove('hidden');
             if (isAdminLoggedIn) {
@@ -839,20 +728,20 @@
                         </div>
                     </div>
                     
-                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-    <div>
-        <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">5-Stelliger Code</label>
-        <input type="text" id="admin_code_${item.day}" value="${item.code}" maxlength="5" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs font-mono text-sky-300 uppercase">
-    </div>
-    <div>
-        <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Titel / Gutschein</label>
-        <input type="text" id="admin_title_${item.day}" value="${item.title}" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs text-white">
-    </div>
-    <div>
-        <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Kategorie</label>
-        <input type="text" id="admin_cat_${item.day}" value="${item.category || ''}" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs text-sky-300">
-    </div>
-</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">5-Stelliger Code</label>
+                            <input type="text" id="admin_code_${item.day}" value="${item.code}" maxlength="5" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs font-mono text-sky-300 uppercase">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Titel / Gutschein</label>
+                            <input type="text" id="admin_title_${item.day}" value="${item.title}" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Kategorie</label>
+                            <input type="text" id="admin_cat_${item.day}" value="${item.category || ''}" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs text-sky-300">
+                        </div>
+                    </div>
 
                     <div>
                         <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Geschenk / Nachricht</label>
@@ -864,7 +753,7 @@
             });
         }
 
-function saveAdminChanges() {
+        function saveAdminChanges() {
             calendarData.forEach(item => {
                 const codeInput = document.getElementById(`admin_code_${item.day}`);
                 const titleInput = document.getElementById(`admin_title_${item.day}`);
@@ -898,7 +787,6 @@ function saveAdminChanges() {
             saveCalendarData();
         }
 
-        // Canvas Sternen-Himmel
         function initStarCanvas() {
             const canvas = document.getElementById('starCanvas');
             const ctx = canvas.getContext('2d');
