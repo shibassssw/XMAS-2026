@@ -3,20 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stitch & Angel Adventskalender 🌺</title>
+    <title>XMAS 2026 D&J ❤️</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDK (Compat Version für maximale Zuverlässigkeit in Einzel-HTML) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
@@ -62,7 +58,6 @@
             font-family: 'Fredoka', sans-serif;
         }
 
-        /* Glasklarer Glossy-Effekt für Karten */
         .glass-card {
             background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(16px);
@@ -80,7 +75,6 @@
             box-shadow: 0 12px 30px -10px rgba(2, 132, 199, 0.3);
         }
 
-        /* Partikel Animationen */
         .celebration-particle {
             position: fixed;
             pointer-events: none;
@@ -103,7 +97,6 @@
             }
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -121,10 +114,8 @@
 </head>
 <body class="min-h-screen flex flex-col relative selection:bg-sky-500 selection:text-white">
 
-    <!-- Hintergrund Sternen-Himmel Canvas -->
     <canvas id="starCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-60"></canvas>
 
-    <!-- HEADER / NAVIGATION (Fixiertes Sauberes Flex-Layout ohne Überlappungen) -->
     <header class="relative z-30 border-b border-sky-900/40 bg-slate-950/90 backdrop-blur-xl sticky top-0 shadow-lg shadow-black/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
             
@@ -137,9 +128,9 @@
                 </div>
                 <div>
                     <h1 class="font-display font-bold text-lg sm:text-xl text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-sky-100 to-pink-300">
-                        Ohana Kalender
+                        DJ Kalender
                     </h1>
-                    <p class="text-[10px] sm:text-xs text-sky-300/70 font-medium">Voller Liebe, Stitch & Disney Zauber ✨</p>
+                    <p class="text-[10px] sm:text-xs text-sky-300/70 font-medium">Voller Liebe❤️</p>
                 </div>
             </div>
             
@@ -173,14 +164,14 @@
 
                 <!-- Stitch & Angel Banner -->
                 <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-sky-500/10 border border-sky-400/30 text-sky-300 text-xs font-semibold mb-4">
-                    <span>💙 Stitch & Angela sagen Aloha! 💖</span>
+                    <span>Schöne Weihnachtszeit!</span>
                 </div>
 
                 <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
-                    Hast du heute ein Türchen geöffnet?
+                    Schon ein Türchen geöffnet?
                 </h2>
                 <p class="text-xs sm:text-sm text-sky-200/80 mb-6 max-w-md mx-auto">
-                    Gib den 5-stelligen Code aus deinem 3D-gedruckten Adventskalender ein, um deine Überraschung freizuschalten!
+                    Gib den 5 Stelligen Code aus deinem Kalender ein um den Jeweiligen Tag einzulösen❤️
                 </p>
 
                 <form onsubmit="handleCodeSubmit(event)" class="space-y-4 max-w-sm mx-auto">
@@ -285,7 +276,7 @@
 
             <!-- Stitch & Angel Badge -->
             <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-semibold mb-4">
-                <span>🌺 Stitch x Angel Geschenk 🌺</span>
+                <span>Dustins Geschenk</span>
             </div>
 
             <div class="text-3xl sm:text-4xl font-display font-bold text-sky-300 mb-1" id="modalDayNumber">
