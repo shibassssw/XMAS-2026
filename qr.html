@@ -145,9 +145,14 @@
             <!-- Admin Panel Content -->
             <div id="adminPanelContent" class="hidden flex-col flex-grow overflow-hidden space-y-4">
                 <div class="flex items-center justify-between p-3 bg-slate-950/60 rounded-2xl border border-sky-900/30">
-                    <button onclick="saveAdminChanges()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-md">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Live Speichern
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="saveAdminChanges()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Live Speichern
+                        </button>
+                        <button onclick="forceResetDatabase()" class="px-3 py-2 bg-rose-950/60 hover:bg-rose-900 text-rose-300 rounded-xl text-xs font-medium transition-colors">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Alle 24 Türchen erzwingen
+                        </button>
+                    </div>
                     <span id="adminFeedback" class="text-xs font-medium text-emerald-400 min-h-[16px]"></span>
                 </div>
 
@@ -197,14 +202,14 @@
                     if (!firebase.apps.length) {
                         firebase.initializeApp(firebaseConfig);
                     }
-                    dbRef = firebase.database().ref('qr_doors_24');
+                    dbRef = firebase.database().ref('qr_doors_v2');
 
                     dbRef.on('value', (snapshot) => {
                         const data = snapshot.val();
-                        if (data && Array.isArray(data) && data.length > 0) {
+                        if (data && Array.isArray(data) && data.length >= 24) {
                             qrData = data;
                         } else {
-                            // Standard-Daten für 24 QR Türchen generieren
+                            // Standard-Daten exakt für 24 QR Türchen erzeugen
                             qrData = Array.from({ length: 24 }, (_, i) => ({
                                 door: i + 1,
                                 title: `Türchen Tag ${i + 1}`,
@@ -213,3 +218,42 @@
                             }));
                             dbRef.set(qrData);
                         }
+                        
+                        loadQrContentFromURL();
+                        if (isAdminLoggedIn) renderAdminQrList();
+                    });
+                }
+            } catch(e) {
+                console.warn("Firebase Init Error:", e);
+            }
+        }
+
+        // Falls Firebase noch die alten 23 Einträge im Speicher hat, kann man hier ein Update erzwingen
+        function forceResetDatabase() {
+            const freshData = Array.from({ length: 24 }, (_, i) => ({
+                door: i + 1,
+                title: `Türchen Tag ${i + 1}`,
+                category: "Gutschein",
+                text: `Hier ist deine Nachricht für Tag ${i + 1}! ❤️`
+            }));
+            if (dbRef) {
+                dbRef.set(freshData).then(() => {
+                    const feedback = document.getElementById('adminFeedback');
+                    feedback.textContent = "⚡ Alle 24 Türchen erfolgreich geladen!";
+                    setTimeout(() => { feedback.textContent = ''; }, 3000);
+                });
+            }
+        }
+
+        function loadQrContentFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const doorNum = parseInt(urlParams.get('door') || urlParams.get('tag') || urlParams.get('tuer'), 10);
+
+            const card = document.getElementById('cardContainer');
+            const titleElem = document.getElementById('qrTitle');
+            const catElem = document.getElementById('qrCategory');
+            const msgElem = document.getElementById('qrMessage');
+
+            if (doorNum >= 1 && doorNum <= 24) {
+                const item = qrData.find(d => d.door === doorNum) || {
+                    door: doorNum,
