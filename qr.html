@@ -202,14 +202,14 @@
                     if (!firebase.apps.length) {
                         firebase.initializeApp(firebaseConfig);
                     }
-                    dbRef = firebase.database().ref('qr_doors_v2');
+                    dbRef = firebase.database().ref('qr_doors_24');
 
                     dbRef.on('value', (snapshot) => {
                         const data = snapshot.val();
                         if (data && Array.isArray(data) && data.length >= 24) {
                             qrData = data;
                         } else {
-                            // Standard-Daten exakt für 24 QR Türchen erzeugen
+                            // Erzeuge alle 24 Türchen (1 bis 24)
                             qrData = Array.from({ length: 24 }, (_, i) => ({
                                 door: i + 1,
                                 title: `Türchen Tag ${i + 1}`,
@@ -228,7 +228,6 @@
             }
         }
 
-        // Falls Firebase noch die alten 23 Einträge im Speicher hat, kann man hier ein Update erzwingen
         function forceResetDatabase() {
             const freshData = Array.from({ length: 24 }, (_, i) => ({
                 door: i + 1,
@@ -257,3 +256,161 @@
             if (doorNum >= 1 && doorNum <= 24) {
                 const item = qrData.find(d => d.door === doorNum) || {
                     door: doorNum,
+                    title: `Türchen Tag ${doorNum}`,
+                    category: "Gutschein",
+                    text: "Noch keine Nachricht hinterlegt."
+                };
+
+                titleElem.textContent = item.title;
+                catElem.textContent = item.category || "Gutschein";
+                msgElem.textContent = item.text;
+            } else {
+                titleElem.textContent = "Adventskalender QR-Scan";
+                catElem.textContent = "Info";
+                msgElem.textContent = "Bitte scanne einen der 24 QR-Codes aus deinem Adventskalender! ❤️";
+            }
+
+            setTimeout(() => {
+                card.classList.remove('scale-95', 'opacity-0');
+                card.classList.add('scale-100', 'opacity-100');
+            }, 100);
+        }
+
+        // ADMIN FUNCTIONS
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+            if (isAdminLoggedIn) {
+                showAdminPanel();
+            } else {
+                document.getElementById('adminAuthSection').classList.remove('hidden');
+                document.getElementById('adminPanelContent').classList.add('hidden');
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function checkAdminPass() {
+            const pass = document.getElementById('adminPassInput').value;
+            const err = document.getElementById('adminAuthErr');
+
+            if (pass === ADMIN_PIN) {
+                isAdminLoggedIn = true;
+                err.classList.add('hidden');
+                showAdminPanel();
+            } else {
+                err.classList.remove('hidden');
+            }
+        }
+
+        function showAdminPanel() {
+            document.getElementById('adminAuthSection').classList.add('hidden');
+            document.getElementById('adminPanelContent').classList.remove('hidden');
+            document.getElementById('adminPanelContent').classList.add('flex');
+            renderAdminQrList();
+        }
+
+        function renderAdminQrList() {
+            const list = document.getElementById('adminQrList');
+            list.innerHTML = '';
+
+            const baseUrl = window.location.origin + window.location.pathname;
+
+            qrData.forEach((item) => {
+                const doorUrl = `${baseUrl}?door=${item.door}`;
+                const row = document.createElement('div');
+                row.className = "bg-slate-950 p-4 rounded-2xl border border-sky-900/40 space-y-2";
+
+                row.innerHTML = `
+                    <div class="flex items-center justify-between pb-2 border-b border-sky-900/30">
+                        <span class="text-sm font-bold text-sky-300">QR Türchen Tag ${item.door}</span>
+                        <span class="text-[10px] text-gray-400 font-mono select-all bg-slate-900 px-2 py-1 rounded border border-sky-900">
+                            ${doorUrl}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Titel</label>
+                            <input type="text" id="qr_title_${item.door}" value="${item.title}" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Kategorie</label>
+                            <input type="text" id="qr_cat_${item.door}" value="${item.category || ''}" class="w-full bg-slate-900 border border-sky-900 rounded-xl px-3 py-1.5 text-xs text-sky-300">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] text-sky-200/60 uppercase font-bold mb-1">Text auf der Seite (Mittig angezeigt)</label>
+                        <textarea id="qr_text_${item.door}" rows="2" class="w-full bg-slate-900 border border-sky-900 rounded-xl p-2 text-xs text-sky-100 resize-none">${item.text}</textarea>
+                    </div>
+                `;
+
+                list.appendChild(row);
+            });
+        }
+
+        function saveAdminChanges() {
+            qrData.forEach(item => {
+                const titleInput = document.getElementById(`qr_title_${item.door}`);
+                const catInput = document.getElementById(`qr_cat_${item.door}`);
+                const textInput = document.getElementById(`qr_text_${item.door}`);
+
+                if (titleInput) item.title = titleInput.value.trim();
+                if (catInput) item.category = catInput.value.trim();
+                if (textInput) item.text = textInput.value.trim();
+            });
+
+            if (dbRef) {
+                dbRef.set(qrData).then(() => {
+                    const feedback = document.getElementById('adminFeedback');
+                    feedback.textContent = "⚡ Gespeichert!";
+                    loadQrContentFromURL();
+                    setTimeout(() => { feedback.textContent = ''; }, 3000);
+                });
+            }
+        }
+
+        function initStarCanvas() {
+            const canvas = document.getElementById('starCanvas');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const stars = Array.from({ length: 45 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 2 + 1,
+                d: Math.random() * 0.7 + 0.2
+            }));
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "rgba(56, 189, 248, 0.6)";
+                ctx.beginPath();
+                for (let s of stars) {
+                    ctx.moveTo(s.x, s.y);
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2, true);
+                }
+                ctx.fill();
+
+                for (let s of stars) {
+                    s.y += s.d;
+                    if (s.y > canvas.height) {
+                        s.y = -10;
+                        s.x = Math.random() * canvas.width;
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+    </script>
+</body>
+</html>
